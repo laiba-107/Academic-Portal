@@ -1,20 +1,35 @@
 import * as admin from "firebase-admin";
 
 if (!admin.apps.length) {
-    const projectId = process.env.FIREBASE_PROJECT_ID;
-    const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
-    const privateKey = process.env.FIREBASE_PRIVATE_KEY;
+    try {
+        const serviceAccountVar = process.env.FIREBASE_SERVICE_ACCOUNT;
 
-    if (projectId && clientEmail && privateKey) {
-        admin.initializeApp({
-            credential: admin.credential.cert({
-                projectId,
-                clientEmail,
-                privateKey: privateKey.replace(/\\n/g, "\n"),
-            }),
-        });
-    } else {
-        console.warn("⚠️ Firebase Admin credentials missing. Using mock implementation for build/dev.");
+        if (serviceAccountVar) {
+            // Case 1: Single JSON string variable (Recommended for Vercel)
+            const serviceAccount = JSON.parse(serviceAccountVar);
+            admin.initializeApp({
+                credential: admin.credential.cert(serviceAccount),
+            });
+        } else {
+            // Case 2: Individual variables (Legacy)
+            const projectId = process.env.FIREBASE_PROJECT_ID;
+            const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+            const privateKey = process.env.FIREBASE_PRIVATE_KEY;
+
+            if (projectId && clientEmail && privateKey) {
+                admin.initializeApp({
+                    credential: admin.credential.cert({
+                        projectId,
+                        clientEmail,
+                        privateKey: privateKey.replace(/\\n/g, "\n"),
+                    }),
+                });
+            } else {
+                console.warn("⚠️ Firebase Admin credentials missing. Using mock implementation.");
+            }
+        }
+    } catch (error) {
+        console.error("Firebase Admin initialization error:", error);
     }
 }
 
