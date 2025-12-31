@@ -1,0 +1,17 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Attachment uploads for discussion threads
+    match /attachments/{uid}/{allPaths=**} {
+      // Anyone can read attachments (publicly accessible)
+      allow read: if true;
+      // Only the owner of the attachment or admins can write/delete
+      allow write, delete: if request.auth != null && (request.auth.uid == uid || request.auth.token.role == 'admin');
+    }
+    // Mentor application attachments
+    match /mentorApplications/{uid}/{allPaths=**} {
+      allow read: if request.auth != null && (request.auth.uid == uid || request.auth.token.role == 'admin');
+      allow write, delete: if request.auth != null && (request.auth.uid == uid || request.auth.token.role == 'admin');
+    }
+  }
+}

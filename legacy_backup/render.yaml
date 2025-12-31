@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: student-portal
+    env: static
+    buildCommand: ""
+    staticPublishPath: ./public
+
+  - type: web
+    name: student-portal-api
+    env: node
+    buildCommand: "cd server && npm install"
+    startCommand: "cd server && npm start"
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: FIREBASE_SERVICE_ACCOUNT
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false

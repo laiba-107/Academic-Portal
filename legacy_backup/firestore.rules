@@ -1,0 +1,68 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions for RBAC
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    function getUserDoc() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+    function getUserRole() {
+      return getUserDoc().data.role;
+    }
+    function isRole(role) {
+      return isSignedIn() && getUserRole() == role;
+    }
+    function isOneOfRoles(arr) {
+      return isSignedIn() && getUserRole() in arr;
+    }
+
+    // Users can read and write their own profile; admins can read all
+    match /users/{userId} {
+      allow read, update: if isRole('admin') || (isSignedIn() && request.auth.uid == userId);
+      allow create: if isSignedIn() && request.auth.uid == userId;
+      allow delete: if isRole('admin');
+    }
+
+    // Mentor applications
+    // Users can read own application.
+    // Writes (create/update) are now handled exclusively by the Admin API.
+    match /mentorApplications/{appId} {
+      allow read: if isRole('admin') || (isSignedIn() && request.auth.uid == appId);
+      allow create, update, delete: if false; // Block client writes
+    }
+
+    // Scholarships and admissions: anyone can read; only admin can write
+    match /scholarships/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isRole('admin');
+    }
+    match /admissions/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isRole('admin');
+    }
+
+    // Discussions and replies
+    match /discussions/{threadId} {
+      allow read: if true;
+      allow create: if isSignedIn();
+      allow update, delete: if isRole('admin') || (isSignedIn() && resource.data.uid == request.auth.uid);
+
+      match /replies/{replyId} {
+        allow read: if true;
+        allow create: if isSignedIn();
+        allow update, delete: if isRole('admin') || (isSignedIn() && resource.data.uid == request.auth.uid);
+      }
+    }
+
+    // Logs and analytics: admin only
+    match /logs/{logId} {
+      allow read, write: if isRole('admin');
+    }
+    match /analytics/{docId} {
+      allow read: if isRole('admin');
+      allow write: if isRole('admin');
+    }
+  }
+}
