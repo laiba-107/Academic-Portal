@@ -21,16 +21,14 @@ let auth: any;
 let db: any;
 let storage: any;
 
-// Only initialize on client side
-if (typeof window !== "undefined") {
-    try {
-        app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-        auth = getAuth(app);
-        db = getFirestore(app);
-        storage = getStorage(app);
-    } catch (e) {
-        console.error("Firebase initialization error:", e);
-    }
+// Initialize always (safe for SSR/SSG with Next.js)
+try {
+    app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+    storage = getStorage(app);
+} catch (e) {
+    console.error("Firebase initialization error:", e);
 }
 
 export { app, auth, db, storage };
