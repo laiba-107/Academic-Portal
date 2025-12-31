@@ -4,8 +4,13 @@ import { Loader2 } from "lucide-react";
 export const dynamic = "force-dynamic";
 
 async function getAdmissions() {
-    const snapshot = await adminDb.collection("admissions").orderBy("createdAt", "desc").get();
-    return snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
+    try {
+        const snapshot = await adminDb.collection("admissions").orderBy("createdAt", "desc").get();
+        return snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
+    } catch (error) {
+        console.error("Error fetching admissions:", error);
+        return [];
+    }
 }
 
 export default async function AdmissionsPage() {

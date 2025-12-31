@@ -3,8 +3,13 @@ import { adminDb } from "@/lib/firebase-admin";
 export const dynamic = "force-dynamic";
 
 async function getScholarships() {
-    const snapshot = await adminDb.collection("scholarships").orderBy("createdAt", "desc").get();
-    return snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
+    try {
+        const snapshot = await adminDb.collection("scholarships").orderBy("createdAt", "desc").get();
+        return snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
+    } catch (error) {
+        console.error("Error fetching scholarships:", error);
+        return [];
+    }
 }
 
 export default async function ScholarshipsPage() {
