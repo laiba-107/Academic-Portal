@@ -1,11 +1,13 @@
 import { adminDb } from "@/lib/firebase-admin";
-import { Loader2 } from "lucide-react";
+import UniversityGrid from "@/components/university-grid";
+import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 
 export const dynamic = "force-dynamic";
 
 async function getAdmissions() {
     try {
-        const snapshot = await adminDb.collection("admissions").orderBy("createdAt", "desc").get();
+        const snapshot = await adminDb.collection("admissions").orderBy("createdAt", "asc").get();
         return snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
     } catch (error) {
         console.error("Error fetching admissions:", error);
@@ -14,42 +16,37 @@ async function getAdmissions() {
 }
 
 export default async function AdmissionsPage() {
+    // Simple check for existence of auth token in cookies (Next.js server-side protection)
+    // In a real app, you'd verify the token with Firebase Admin
+    const authCookie = (await cookies()).get("__session");
+
+    // Note: For now, we'll rely on client-side protection in Navbar, 
+    // but this is how you'd start server-side protection.
+    // if (!authCookie) redirect("/login");
+
     const admissions = await getAdmissions();
 
     return (
-        <div className="container py-8">
-            <div className="mb-8 space-y-2">
-                <h1 className="text-3xl font-bold text-primary">Admissions Open</h1>
-                <p className="text-muted-foreground">
-                    Explore top university programs and opportunities.
-                </p>
-            </div>
+        <main className="min-h-[calc(100vh-64px)] w-full py-12 bg-slate-50">
+            <div className="container relative z-10 px-4 md:px-6">
+                <div className="mb-12 space-y-4 text-center">
+                    <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-primary drop-shadow-sm">
+                        University Admissions 2025
+                    </h1>
+                    <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+                        Detailed information on admissions, requirements, and direct application links for top universities.
+                    </p>
+                </div>
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {admissions.map((item: any) => (
-                    <div
-                        key={item.id}
-                        className="group relative flex flex-col justify-between overflow-hidden rounded-xl border border-border bg-card p-6 shadow-sm transition-all hover:shadow-md"
-                    >
-                        <div className="space-y-4">
-                            <h3 className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors">
-                                {item.university || "University Name"}
-                            </h3>
-                            <div className="space-y-2 text-sm text-muted-foreground">
-                                <p><span className="font-medium text-foreground">Program:</span> {item.program || "Program Name"}</p>
-                                <p><span className="font-medium text-foreground">Location:</span> {item.country || "Country"}</p>
-                                <p><span className="font-medium text-foreground">Deadline:</span> {item.deadline || "TBA"}</p>
-                            </div>
-                        </div>
-                    </div>
-                ))}
+                <UniversityGrid universities={admissions} />
 
                 {admissions.length === 0 && (
-                    <div className="col-span-full py-12 text-center text-muted-foreground">
-                        No admission opportunities found at this time.
+                    <div className="col-span-full py-20 text-center border-2 border-dashed rounded-3xl bg-white/50 backdrop-blur-sm">
+                        <h3 className="text-2xl font-semibold mb-2">No Admissions Data Found</h3>
+                        <p className="text-muted-foreground">We're currently updating the 2025 admissions list. Please check back soon!</p>
                     </div>
                 )}
             </div>
-        </div>
+        </main>
     );
 }

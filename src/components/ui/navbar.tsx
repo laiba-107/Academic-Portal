@@ -36,66 +36,86 @@ export function Navbar() {
 
     const navLinks = [
         { href: "/", label: "Home" },
+        { href: "/admissions", label: "Admissions" },
         { href: "/scholarships", label: "Scholarships" },
         { href: "/forum", label: "Forum" },
     ];
 
     return (
-        <nav className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <div className="container flex h-16 items-center justify-between">
-                <div className="flex items-center gap-2">
-                    <Link href="/" className="flex items-center gap-2 font-bold text-xl text-primary">
-                        <GraduationCap className="h-6 w-6" />
-                        <span>StudentPortal</span>
+        <nav className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-md">
+            <div className="container flex h-16 items-center justify-between px-4 md:px-6">
+                <div className="flex items-center gap-8">
+                    <Link href="/" className="flex items-center gap-2">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-lg shadow-primary/20">
+                            <GraduationCap className="h-6 w-6" />
+                        </div>
+                        <span className="text-xl font-bold tracking-tight text-primary">StudentPortal</span>
                     </Link>
-                </div>
 
-                {/* Desktop Nav */}
-                <div className="hidden md:flex items-center gap-6">
-                    {navLinks.map((link) => {
-                        // Hide protected routes if no user
-                        if (!user && (link.href === '/forum' || link.href === '/scholarships')) return null;
-                        return (
-                            <Link
-                                key={link.href}
-                                href={link.href}
-                                className={cn(
-                                    "text-sm font-medium transition-colors hover:text-primary",
-                                    pathname === link.href ? "text-primary" : "text-muted-foreground"
-                                )}
-                            >
-                                {link.label}
-                            </Link>
-                        );
-                    })}
+                    {/* Desktop Nav */}
+                    <div className="hidden md:flex items-center gap-6">
+                        {navLinks.map((link) => {
+                            // Hide protected routes if no user
+                            const isProtected = link.href !== '/';
+                            if (!user && isProtected) return null;
+
+                            return (
+                                <Link
+                                    key={link.href}
+                                    href={link.href}
+                                    className={cn(
+                                        "text-sm font-medium transition-all hover:text-primary relative py-1",
+                                        pathname === link.href ? "text-primary font-bold after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-primary after:rounded-full" : "text-muted-foreground"
+                                    )}
+                                >
+                                    {link.label}
+                                </Link>
+                            );
+                        })}
+                    </div>
                 </div>
 
                 <div className="hidden md:flex items-center gap-4">
                     {user ? (
                         <div className="flex items-center gap-4">
                             {userRole === "admin" && (
-                                <Link href="/admin" className="text-sm font-semibold text-primary hover:text-primary/80 px-2">
-                                    Admin
+                                <Link
+                                    href="/admin"
+                                    className="text-sm font-semibold text-primary/80 hover:text-primary px-3 py-2 rounded-lg hover:bg-primary/5 transition-all"
+                                >
+                                    Admin Panel
                                 </Link>
                             )}
-                            <Link href="/dashboard" className="text-sm font-medium text-muted-foreground hover:text-primary">
+                            <Link
+                                href="/dashboard"
+                                className={cn(
+                                    "text-sm font-medium transition-all px-3 py-2 rounded-lg",
+                                    pathname === "/dashboard" ? "bg-primary/5 text-primary" : "text-muted-foreground hover:bg-muted"
+                                )}
+                            >
                                 Dashboard
                             </Link>
-                            <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary ring-2 ring-primary/20">
+                            <button
+                                onClick={() => auth.signOut()}
+                                className="h-9 items-center justify-center rounded-lg border border-border px-4 text-xs font-bold text-muted-foreground hover:bg-destructive/5 hover:text-destructive hover:border-destructive/20 transition-all uppercase tracking-wider"
+                            >
+                                Sign Out
+                            </button>
+                            <Link href="/dashboard" className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary ring-2 ring-primary/20 hover:ring-primary/40 transition-all overflow-hidden border border-primary/20">
                                 <UserIcon className="h-5 w-5" />
-                            </div>
+                            </Link>
                         </div>
                     ) : (
                         <div className="flex items-center gap-3">
                             <Link
                                 href="/login"
-                                className="text-sm font-bold text-primary hover:text-primary/80 px-4 py-2"
+                                className="text-sm font-bold text-muted-foreground hover:text-primary px-4 py-2 transition-colors"
                             >
                                 Log in
                             </Link>
                             <Link
                                 href="/signup"
-                                className="text-sm font-bold bg-primary text-primary-foreground px-6 py-2.5 rounded-full hover:bg-primary/90 transition-all shadow-md hover:shadow-lg"
+                                className="text-sm font-bold bg-primary text-primary-foreground px-6 py-2.5 rounded-full hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 active:scale-95"
                             >
                                 Sign up
                             </Link>
