@@ -12,7 +12,8 @@
 }
 
 :root {
-  --background: #ffffff;
+  --background: #fdfdfd;
+  /* Brighter white */
   --foreground: #0f172a;
 
   /* Deep Royal Blue Theme */
@@ -22,18 +23,21 @@
   /* Blue 900 */
   --primary-foreground: #ffffff;
 
-  --muted: #f1f5f9;
+  --muted: #f8fafc;
+  /* Lighter gray */
   /* Slate 100 */
   --muted-foreground: #64748b;
   /* Slate 500 */
 
-  --border: #e2e8f0;
+  --border: #f1f5f9;
+  /* Softer border */
   /* Slate 200 */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #020617;
+    --background: #0f172a;
+    /* Lighter Slate for better contrast */
     /* Slate 950 */
     --foreground: #f8fafc;
 
@@ -47,12 +51,12 @@
     --muted-foreground: #94a3b8;
     /* Slate 400 */
 
-    --border: #1e293b;
+    --border: #334155;
   }
 }
 
 body {
-  background-color: #f8fafc;
+  background-color: var(--background);
   /* Lighter background code */
   color: var(--foreground);
   font-family: var(--font-outfit), sans-serif;
@@ -61,6 +65,6 @@ body {
 
 @media (prefers-color-scheme: dark) {
   body {
-    background-color: #020617;
+    background-color: var(--background);
   }
 }
