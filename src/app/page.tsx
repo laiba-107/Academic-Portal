@@ -110,8 +110,7 @@ export default function Home() {
             </p>
             <div className="flex flex-col items-center">
               <div className="h-16 w-16 bg-white/20 rounded-full flex items-center justify-center mb-4 text-2xl font-black">A</div>
-              <p className="font-bold text-xl uppercase tracking-widest">UCA Student</p>
-              <p className="text-primary-foreground/80 font-medium">Class, 2024</p>
+              <p className="font-bold text-xl uppercase tracking-widest">Student</p>
             </div>
           </div>
         </div>
