@@ -1,16 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { collection, query, orderBy, onSnapshot, DocumentData } from "firebase/firestore";
+import { collection, query, orderBy, onSnapshot, limit } from "firebase/firestore";
 import { db, auth } from "@/lib/firebase";
 import { createPost, createReply } from "@/actions/forum-actions";
-import { useAuthState } from "react-firebase-hooks/auth"; // Need to install or use native hook. I'll use native hook to save installs or simple custom hook. I used native in Navbar. I'll use native here.
 import { onAuthStateChanged, User } from "firebase/auth";
 import { toast } from "sonner";
-import { MessageSquare, ThumbsUp, User as UserIcon, Send, Loader2 } from "lucide-react";
+import { MessageSquare, ThumbsUp, User as UserIcon, Send, Loader2, ChevronDown, ChevronUp } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Helper Interface
 interface Post {
     id: string;
     title: string;
@@ -21,28 +19,161 @@ interface Post {
     replyCount: number;
 }
 
+interface Reply {
+    id: string;
+    content: string;
+    authorName: string;
+    authorRole: string;
+    createdAt: string;
+}
+
+function PostItem({ post, user, userRole }: { post: Post, user: User | null, userRole: string }) {
+    const [expanded, setExpanded] = useState(false);
+    const [replies, setReplies] = useState<Reply[]>([]);
+    const [loadingReplies, setLoadingReplies] = useState(false);
+    const [replyContent, setReplyContent] = useState("");
+    const [submittingReply, setSubmittingReply] = useState(false);
+
+    useEffect(() => {
+        let unsubscribe: () => void;
+        if (expanded && db) {
+            setLoadingReplies(true);
+            const q = query(collection(db, "discussions", post.id, "replies"), orderBy("createdAt", "asc"));
+            unsubscribe = onSnapshot(q, (snapshot) => {
+                const msgs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Reply));
+                setReplies(msgs);
+                setLoadingReplies(false);
+            });
+        }
+        return () => unsubscribe && unsubscribe();
+    }, [expanded, post.id]);
+
+    const handleReply = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!user) {
+            toast.error("Login to reply");
+            return;
+        }
+        if (!replyContent.trim()) return;
+
+        setSubmittingReply(true);
+        try {
+            await createReply(post.id, replyContent, user.uid, (user as any).displayName || "Anonymous", userRole);
+            toast.success("Reply sent");
+            setReplyContent("");
+        } catch (e) {
+            toast.error("Failed to send reply");
+        } finally {
+            setSubmittingReply(false);
+        }
+    };
+
+    return (
+        <motion.div
+            layout // Enable layout animation for smooth expanding
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="border border-border rounded-xl bg-card shadow-sm overflow-hidden"
+        >
+            <div className="p-6">
+                <div className="flex justify-between items-start mb-4">
+                    <div>
+                        <h3 className="text-xl font-semibold mb-1">{post.title}</h3>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${post.authorRole === 'mentor' ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-700'}`}>
+                                {post.authorRole === 'mentor' ? 'Mentor' : 'Student'}
+                            </span>
+                            <span>{post.authorName}</span>
+                            <span>•</span>
+                            <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+                        </div>
+                    </div>
+                </div>
+                <p className="text-foreground/80 leading-relaxed whitespace-pre-wrap">{post.content}</p>
+
+                <div className="mt-4 pt-4 border-t border-border flex items-center gap-4">
+                    <button
+                        onClick={() => setExpanded(!expanded)}
+                        className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+                    >
+                        <MessageSquare className="h-4 w-4" />
+                        {post.replyCount} Replies
+                        {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                    </button>
+                </div>
+            </div>
+
+            <AnimatePresence>
+                {expanded && (
+                    <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="bg-muted/30 border-t border-border"
+                    >
+                        <div className="p-6 space-y-4">
+                            {loadingReplies ? (
+                                <div className="text-center py-4"><Loader2 className="h-5 w-5 animate-spin mx-auto text-muted-foreground" /></div>
+                            ) : replies.length === 0 ? (
+                                <p className="text-center text-sm text-muted-foreground py-4">No replies yet. Be the first!</p>
+                            ) : (
+                                <div className="space-y-4">
+                                    {replies.map(reply => (
+                                        <div key={reply.id} className="bg-background border border-border rounded-lg p-4">
+                                            <div className="flex justify-between items-start text-xs text-muted-foreground mb-2">
+                                                <div className="flex items-center gap-2">
+                                                    <span className={`font-medium ${reply.authorRole === 'mentor' ? 'text-indigo-600' : ''}`}>
+                                                        {reply.authorName}
+                                                        {reply.authorRole === 'mentor' && " (Mentor)"}
+                                                    </span>
+                                                </div>
+                                                <span>{new Date(reply.createdAt).toLocaleDateString()}</span>
+                                            </div>
+                                            <p className="text-sm whitespace-pre-wrap">{reply.content}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {user ? (
+                                <form onSubmit={handleReply} className="flex gap-2 mt-4">
+                                    <input
+                                        value={replyContent}
+                                        onChange={e => setReplyContent(e.target.value)}
+                                        placeholder="Write a reply..."
+                                        className="flex-1 h-10 rounded-md border border-input bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                    />
+                                    <button
+                                        type="submit"
+                                        disabled={submittingReply || !replyContent.trim()}
+                                        className="inline-flex items-center justify-center rounded-md bg-primary w-10 h-10 text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+                                    >
+                                        {submittingReply ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                                    </button>
+                                </form>
+                            ) : (
+                                <p className="text-center text-sm text-muted-foreground py-2">Please login to reply.</p>
+                            )}
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </motion.div>
+    );
+}
+
 export default function ForumPage() {
     const [user, setUser] = useState<User | null>(null);
     const [userRole, setUserRole] = useState("user");
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
-    const [configError, setConfigError] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
-
-    // New Post Form
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [submitting, setSubmitting] = useState(false);
 
-    // Auth & Data Listener
     useEffect(() => {
-        // Safety check: Don't run if Firebase isn't initialized
-        if (!auth || !db) {
-            console.warn("Firebase not initialized. Please add credentials to .env.local");
-            setConfigError(true);
-            setLoading(false);
-            return;
-        }
+        if (!auth || !db) return;
 
         const unsubAuth = onAuthStateChanged(auth, async (u) => {
             setUser(u);
@@ -70,13 +201,10 @@ export default function ForumPage() {
 
     const handleCreatePost = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!user) {
-            toast.error("You must be logged in to post.");
-            return;
-        }
+        if (!user) return;
         setSubmitting(true);
         try {
-            await createPost(title, content, user.uid, (user as any).nickname || user.email?.split('@')[0] || "Anonymous", userRole);
+            await createPost(title, content, user.uid, (user as any).displayName || "Anonymous", userRole);
             toast.success("Question posted!");
             setIsModalOpen(false);
             setTitle("");
@@ -88,25 +216,6 @@ export default function ForumPage() {
         }
     };
 
-    if (configError) {
-        return (
-            <div className="container py-8 max-w-4xl">
-                <div className="rounded-xl border border-yellow-200 bg-yellow-50 p-6 text-yellow-800">
-                    <h3 className="flex items-center text-lg font-semibold mb-2">
-                        <span className="mr-2">⚠️</span> Configuration Missing
-                    </h3>
-                    <p className="mb-4">
-                        The forum feature requires Firebase configuration.
-                        Please add your Firebase credentials to the <code className="bg-yellow-100 px-1 py-0.5 rounded">.env.local</code> file.
-                    </p>
-                    <p className="text-sm opacity-80">
-                        Check the README.md for setup instructions.
-                    </p>
-                </div>
-            </div>
-        );
-    }
-
     return (
         <div className="container py-8 max-w-4xl">
             <div className="flex items-center justify-between mb-8">
@@ -116,14 +225,14 @@ export default function ForumPage() {
                 </div>
                 <button
                     onClick={() => setIsModalOpen(true)}
-                    className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-colors inline-flex items-center"
+                    className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-colors inline-flex items-center font-medium"
                 >
                     <MessageSquare className="mr-2 h-4 w-4" />
                     Ask Question
                 </button>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-6">
                 {loading && <div className="text-center py-10"><Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" /></div>}
 
                 {!loading && posts.length === 0 && (
@@ -133,38 +242,7 @@ export default function ForumPage() {
                 )}
 
                 {posts.map((post) => (
-                    <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        key={post.id}
-                        className="border border-border rounded-xl p-6 bg-card shadow-sm hover:border-primary/50 transition-colors"
-                    >
-                        <div className="flex justify-between items-start mb-4">
-                            <div>
-                                <h3 className="text-xl font-semibold mb-1">{post.title}</h3>
-                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${post.authorRole === 'mentor' ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-700'}`}>
-                                        {post.authorRole === 'mentor' ? 'Mentor' : 'Student'}
-                                    </span>
-                                    <span>{post.authorName}</span>
-                                    <span>•</span>
-                                    <span>{new Date(post.createdAt).toLocaleDateString()}</span>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-1 text-muted-foreground">
-                                <MessageSquare className="h-4 w-4" />
-                                <span className="text-sm">{post.replyCount}</span>
-                            </div>
-                        </div>
-                        <p className="text-foreground/80 leading-relaxed whitespace-pre-wrap">{post.content}</p>
-
-                        <div className="mt-4 pt-4 border-t border-border flex items-center gap-4">
-                            {/* Reply button could act here, but for MVP just showing logic */}
-                            <span className="text-xs text-muted-foreground italic">
-                                Real-time updates active
-                            </span>
-                        </div>
-                    </motion.div>
+                    <PostItem key={post.id} post={post} user={user} userRole={userRole} />
                 ))}
             </div>
 

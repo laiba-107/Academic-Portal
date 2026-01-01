@@ -45,18 +45,22 @@ export function Navbar() {
 
                 {/* Desktop Nav */}
                 <div className="hidden md:flex items-center gap-6">
-                    {navLinks.map((link) => (
-                        <Link
-                            key={link.href}
-                            href={link.href}
-                            className={cn(
-                                "text-sm font-medium transition-colors hover:text-primary",
-                                pathname === link.href ? "text-primary" : "text-muted-foreground"
-                            )}
-                        >
-                            {link.label}
-                        </Link>
-                    ))}
+                    {navLinks.map((link) => {
+                        // Hide protected routes if no user
+                        if (!user && (link.href === '/forum' || link.href === '/scholarships')) return null;
+                        return (
+                            <Link
+                                key={link.href}
+                                href={link.href}
+                                className={cn(
+                                    "text-sm font-medium transition-colors hover:text-primary",
+                                    pathname === link.href ? "text-primary" : "text-muted-foreground"
+                                )}
+                            >
+                                {link.label}
+                            </Link>
+                        );
+                    })}
                 </div>
 
                 <div className="hidden md:flex items-center gap-4">
@@ -65,21 +69,21 @@ export function Navbar() {
                             <Link href="/dashboard" className="text-sm font-medium text-muted-foreground hover:text-primary">
                                 Dashboard
                             </Link>
-                            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                                <UserIcon className="h-4 w-4" />
+                            <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary ring-2 ring-primary/20">
+                                <UserIcon className="h-5 w-5" />
                             </div>
                         </div>
                     ) : (
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-3">
                             <Link
                                 href="/login"
-                                className="text-sm font-medium text-muted-foreground hover:text-primary px-3 py-2"
+                                className="text-sm font-bold text-primary hover:text-primary/80 px-4 py-2"
                             >
                                 Log in
                             </Link>
                             <Link
                                 href="/signup"
-                                className="text-sm font-medium bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-colors"
+                                className="text-sm font-bold bg-primary text-primary-foreground px-6 py-2.5 rounded-full hover:bg-primary/90 transition-all shadow-md hover:shadow-lg"
                             >
                                 Sign up
                             </Link>
@@ -99,19 +103,22 @@ export function Navbar() {
             {/* Mobile Nav */}
             {isOpen && (
                 <div className="md:hidden border-t border-border bg-background p-4 flex flex-col gap-4">
-                    {navLinks.map((link) => (
-                        <Link
-                            key={link.href}
-                            href={link.href}
-                            className={cn(
-                                "text-sm font-medium transition-colors hover:text-primary py-2",
-                                pathname === link.href ? "text-primary" : "text-muted-foreground"
-                            )}
-                            onClick={() => setIsOpen(false)}
-                        >
-                            {link.label}
-                        </Link>
-                    ))}
+                    {navLinks.map((link) => {
+                        if (!user && (link.href === '/forum' || link.href === '/scholarships')) return null;
+                        return (
+                            <Link
+                                key={link.href}
+                                href={link.href}
+                                className={cn(
+                                    "text-sm font-medium transition-colors hover:text-primary py-2",
+                                    pathname === link.href ? "text-primary" : "text-muted-foreground"
+                                )}
+                                onClick={() => setIsOpen(false)}
+                            >
+                                {link.label}
+                            </Link>
+                        );
+                    })}
                     <div className="border-t border-border pt-4 flex flex-col gap-2">
                         {user ? (
                             <Link
@@ -132,7 +139,7 @@ export function Navbar() {
                                 </Link>
                                 <Link
                                     href="/signup"
-                                    className="text-sm font-medium bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-colors text-center"
+                                    className="text-sm font-bold bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-colors text-center"
                                     onClick={() => setIsOpen(false)}
                                 >
                                     Sign up

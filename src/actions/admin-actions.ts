@@ -1,6 +1,6 @@
 "use server";
 
-import { adminDb } from "@/lib/firebase-admin";
+import { adminDb, adminAuth } from "@/lib/firebase-admin";
 import { revalidatePath } from "next/cache";
 
 export async function createAdmission(data: any) {
@@ -65,5 +65,36 @@ export async function deleteScholarship(id: string) {
         return { success: true };
     } catch (error) {
         return { success: false, error: "Failed to delete scholarship" };
+    }
+}
+
+export async function approveApplication(applicationId: string, uid: string) {
+    try {
+        await adminDb.collection("mentor_applications").doc(applicationId).update({
+            status: "approved",
+            updatedAt: new Date().toISOString(),
+        });
+
+        // Grant mentor role
+        await adminAuth.setCustomUserClaims(uid, { role: "mentor" });
+
+        revalidatePath("/admin/applications");
+        return { success: true };
+    } catch (error) {
+        console.error("Error approving application:", error);
+        return { success: false, error: "Failed to approve application" };
+    }
+}
+
+export async function rejectApplication(applicationId: string) {
+    try {
+        await adminDb.collection("mentor_applications").doc(applicationId).update({
+            status: "rejected",
+            updatedAt: new Date().toISOString(),
+        });
+        revalidatePath("/admin/applications");
+        return { success: true };
+    } catch (error) {
+        return { success: false, error: "Failed to reject application" };
     }
 }
