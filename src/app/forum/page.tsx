@@ -3,10 +3,10 @@
 import { useState, useEffect } from "react";
 import { collection, query, orderBy, onSnapshot, limit } from "firebase/firestore";
 import { db, auth } from "@/lib/firebase";
-import { createPost, createReply } from "@/actions/forum-actions";
+import { createPost, createReply, deletePost, deleteReply } from "@/actions/forum-actions";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { toast } from "sonner";
-import { MessageSquare, ThumbsUp, User as UserIcon, Send, Loader2, ChevronDown, ChevronUp } from "lucide-react";
+import { MessageSquare, ThumbsUp, User as UserIcon, Send, Loader2, ChevronDown, ChevronUp, Trash2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Post {
@@ -72,6 +72,28 @@ function PostItem({ post, user, userRole }: { post: Post, user: User | null, use
         }
     };
 
+    const handleDeletePost = async () => {
+        if (!confirm("Are you sure you want to delete this post?")) return;
+        try {
+            const res = await deletePost(post.id);
+            if (res.success) toast.success("Post deleted");
+            else toast.error(res.error);
+        } catch (e) {
+            toast.error("Failed to delete post");
+        }
+    };
+
+    const handleDeleteReply = async (replyId: string) => {
+        if (!confirm("Delete this reply?")) return;
+        try {
+            const res = await deleteReply(post.id, replyId);
+            if (res.success) toast.success("Reply deleted");
+            else toast.error(res.error);
+        } catch (e) {
+            toast.error("Failed to delete reply");
+        }
+    };
+
     return (
         <motion.div
             layout // Enable layout animation for smooth expanding
@@ -92,6 +114,15 @@ function PostItem({ post, user, userRole }: { post: Post, user: User | null, use
                             <span>{new Date(post.createdAt).toLocaleDateString()}</span>
                         </div>
                     </div>
+                    {userRole === "admin" && (
+                        <button
+                            onClick={handleDeletePost}
+                            className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                            title="Delete Post"
+                        >
+                            <Trash2 className="h-5 w-5" />
+                        </button>
+                    )}
                 </div>
                 <p className="text-foreground/80 leading-relaxed whitespace-pre-wrap">{post.content}</p>
 
@@ -123,7 +154,7 @@ function PostItem({ post, user, userRole }: { post: Post, user: User | null, use
                             ) : (
                                 <div className="space-y-4">
                                     {replies.map(reply => (
-                                        <div key={reply.id} className="bg-background border border-border rounded-lg p-4">
+                                        <div key={reply.id} className="bg-background border border-border rounded-lg p-4 group relative">
                                             <div className="flex justify-between items-start text-xs text-muted-foreground mb-2">
                                                 <div className="flex items-center gap-2">
                                                     <span className={`font-medium ${reply.authorRole === 'mentor' ? 'text-indigo-600' : ''}`}>
@@ -131,7 +162,18 @@ function PostItem({ post, user, userRole }: { post: Post, user: User | null, use
                                                         {reply.authorRole === 'mentor' && " (Mentor)"}
                                                     </span>
                                                 </div>
-                                                <span>{new Date(reply.createdAt).toLocaleDateString()}</span>
+                                                <div className="flex items-center gap-2">
+                                                    <span>{new Date(reply.createdAt).toLocaleDateString()}</span>
+                                                    {userRole === "admin" && (
+                                                        <button
+                                                            onClick={() => handleDeleteReply(reply.id)}
+                                                            className="text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                            title="Delete Reply"
+                                                        >
+                                                            <Trash2 className="h-3 w-3" />
+                                                        </button>
+                                                    )}
+                                                </div>
                                             </div>
                                             <p className="text-sm whitespace-pre-wrap">{reply.content}</p>
                                         </div>

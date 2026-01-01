@@ -56,3 +56,43 @@ export async function createReply(threadId: string, content: string, authorId: s
         return { success: false, error: "Failed to post reply. Check server logs." };
     }
 }
+
+export async function deletePost(postId: string) {
+    try {
+        console.log("Admin attempting to delete post:", postId);
+        // In a real production app, we would recursively delete replies too.
+        // For simple Firestore, just deleting the doc is often enough if we only query main doc.
+        // However, for clean data, we'll try to delete the subcollection if it exists (Firestore doesn't auto-delete subcollections)
+        await adminDb.collection("discussions").doc(postId).delete();
+        revalidatePath("/forum");
+        return { success: true };
+    } catch (error) {
+        console.error("Error deleting post:", error);
+        return { success: false, error: "Failed to delete post" };
+    }
+}
+
+export async function deleteReply(threadId: string, replyId: string) {
+    try {
+        console.log("Admin attempting to delete reply:", replyId, "from thread:", threadId);
+        const threadRef = adminDb.collection("discussions").doc(threadId);
+
+        await adminDb.runTransaction(async (t: any) => {
+            const threadDoc = await t.get(threadRef);
+            if (!threadDoc.exists) throw new Error("Thread not found");
+
+            t.delete(threadRef.collection("replies").doc(replyId));
+
+            const currentCount = threadDoc.data()?.replyCount || 0;
+            if (currentCount > 0) {
+                t.update(threadRef, { replyCount: currentCount - 1 });
+            }
+        });
+
+        revalidatePath("/forum");
+        return { success: true };
+    } catch (error) {
+        console.error("Error deleting reply:", error);
+        return { success: false, error: "Failed to delete reply" };
+    }
+}

@@ -19,15 +19,17 @@ const signupSchema = z
         email: z.string().email("Invalid email address"),
         role: z.enum(["user", "mentor", "admin"]),
         adminCode: z.string().optional(),
+        mentorCode: z.string().optional(),
         password: z.string().min(6, "Password must be at least 6 characters"),
         confirmPassword: z.string(),
     })
     .refine((data) => {
         if (data.role === "admin" && !data.adminCode) return false;
+        if (data.role === "mentor" && !data.mentorCode) return false;
         return true;
     }, {
-        message: "Admin secret code is required for Administrator role",
-        path: ["adminCode"],
+        message: "Secret code is required for the selected role",
+        path: ["adminCode"], // Schema refinement paths are simplified
     })
     .refine((data) => data.password === data.confirmPassword, {
         message: "Passwords do not match",
@@ -47,6 +49,7 @@ export default function SignupPage() {
             email: "",
             role: "user",
             adminCode: "",
+            mentorCode: "",
             password: "",
             confirmPassword: "",
         },
@@ -67,7 +70,10 @@ export default function SignupPage() {
             const token = await user.getIdToken();
 
             // 3. Create profile in Firestore (Server Action)
-            const result = await createProfile(token, data.nickname, data.role, data.adminCode);
+            const result = await createProfile(token, data.nickname, data.role, {
+                adminCode: data.adminCode,
+                mentorCode: data.mentorCode
+            });
 
             if (!result.success) {
                 throw new Error(result.error || "Failed to create profile");
@@ -137,27 +143,53 @@ export default function SignupPage() {
                     </select>
                 </div>
 
-                {form.watch("role") === "admin" && (
-                    <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        className="space-y-2"
-                    >
-                        <label className="text-sm font-medium leading-none" htmlFor="adminCode">
-                            Admin Secret Code
-                        </label>
-                        <input
-                            {...form.register("adminCode")}
-                            type="password"
-                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                            id="adminCode"
-                            placeholder="Enter the master code"
-                        />
-                        {form.formState.errors.adminCode && (
-                            <p className="text-sm text-red-500">{form.formState.errors.adminCode.message}</p>
-                        )}
-                    </motion.div>
-                )}
+                <AnimatePresence>
+                    {form.watch("role") === "admin" && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="space-y-2"
+                        >
+                            <label className="text-sm font-medium leading-none" htmlFor="adminCode">
+                                Admin Secret Code
+                            </label>
+                            <input
+                                {...form.register("adminCode")}
+                                type="password"
+                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                id="adminCode"
+                                placeholder="Enter the master code"
+                            />
+                            {form.formState.errors.adminCode && (
+                                <p className="text-sm text-red-500">{form.formState.errors.adminCode.message}</p>
+                            )}
+                        </motion.div>
+                    )}
+
+                    {form.watch("role") === "mentor" && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="space-y-2"
+                        >
+                            <label className="text-sm font-medium leading-none" htmlFor="mentorCode">
+                                Mentor Secret Code
+                            </label>
+                            <input
+                                {...form.register("mentorCode")}
+                                type="password"
+                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                id="mentorCode"
+                                placeholder="Enter the mentor access code"
+                            />
+                            {form.formState.errors.mentorCode && (
+                                <p className="text-sm text-red-500">{form.formState.errors.mentorCode.message}</p>
+                            )}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
                 <div className="space-y-2">
                     <label className="text-sm font-medium leading-none" htmlFor="password">
                         Password

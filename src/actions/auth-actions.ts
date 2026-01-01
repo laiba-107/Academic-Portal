@@ -2,7 +2,12 @@
 
 import { adminAuth, adminDb } from "@/lib/firebase-admin";
 
-export async function createProfile(idToken: string, nickname: string, requestedRole: string = "user", adminCode?: string) {
+export async function createProfile(
+    idToken: string,
+    nickname: string,
+    requestedRole: string = "user",
+    codes?: { adminCode?: string, mentorCode?: string }
+) {
     try {
         const decodedToken = await adminAuth.verifyIdToken(idToken);
         const uid = decodedToken.uid;
@@ -11,15 +16,21 @@ export async function createProfile(idToken: string, nickname: string, requested
         let roleToSet = "user";
 
         if (requestedRole === "admin") {
-            const masterCode = process.env.ADMIN_SECRET_CODE || "admin123"; // Fallback for safety during setup
-            if (adminCode !== masterCode) {
+            const masterCode = process.env.ADMIN_SECRET_CODE || "admin123";
+            if (codes?.adminCode !== masterCode) {
                 return { success: false, error: "Invalid Admin Secret Code" };
             }
             roleToSet = "admin";
+        } else if (requestedRole === "mentor") {
+            const mentorSecret = process.env.MENTOR_SECRET_CODE || "mentor123";
+            if (codes?.mentorCode !== mentorSecret) {
+                return { success: false, error: "Invalid Mentor Secret Code" };
+            }
+            roleToSet = "mentor";
         }
 
-        // If they sign up as mentor, they start as 'user' but we create an application
-        if (requestedRole === "mentor") {
+        // If they sign up as mentor and didn't provide a valid code, they start as 'user' and we create an application
+        if (requestedRole === "mentor" && roleToSet === "user") {
             await adminDb.collection("mentorApplications").add({
                 uid,
                 email,
