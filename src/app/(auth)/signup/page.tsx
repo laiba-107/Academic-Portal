@@ -11,14 +11,23 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const signupSchema = z
     .object({
         nickname: z.string().min(2, "Nickname must be at least 2 characters"),
         email: z.string().email("Invalid email address"),
         role: z.enum(["user", "mentor", "admin"]),
+        adminCode: z.string().optional(),
         password: z.string().min(6, "Password must be at least 6 characters"),
         confirmPassword: z.string(),
+    })
+    .refine((data) => {
+        if (data.role === "admin" && !data.adminCode) return false;
+        return true;
+    }, {
+        message: "Admin secret code is required for Administrator role",
+        path: ["adminCode"],
     })
     .refine((data) => data.password === data.confirmPassword, {
         message: "Passwords do not match",
@@ -37,6 +46,7 @@ export default function SignupPage() {
             nickname: "",
             email: "",
             role: "user",
+            adminCode: "",
             password: "",
             confirmPassword: "",
         },
@@ -57,7 +67,7 @@ export default function SignupPage() {
             const token = await user.getIdToken();
 
             // 3. Create profile in Firestore (Server Action)
-            const result = await createProfile(token, data.nickname, data.role);
+            const result = await createProfile(token, data.nickname, data.role, data.adminCode);
 
             if (!result.success) {
                 throw new Error(result.error || "Failed to create profile");
@@ -126,6 +136,28 @@ export default function SignupPage() {
                         <option value="admin">Administrator</option>
                     </select>
                 </div>
+
+                {form.watch("role") === "admin" && (
+                    <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        className="space-y-2"
+                    >
+                        <label className="text-sm font-medium leading-none" htmlFor="adminCode">
+                            Admin Secret Code
+                        </label>
+                        <input
+                            {...form.register("adminCode")}
+                            type="password"
+                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            id="adminCode"
+                            placeholder="Enter the master code"
+                        />
+                        {form.formState.errors.adminCode && (
+                            <p className="text-sm text-red-500">{form.formState.errors.adminCode.message}</p>
+                        )}
+                    </motion.div>
+                )}
                 <div className="space-y-2">
                     <label className="text-sm font-medium leading-none" htmlFor="password">
                         Password

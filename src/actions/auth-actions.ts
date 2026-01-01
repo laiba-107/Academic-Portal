@@ -2,13 +2,21 @@
 
 import { adminAuth, adminDb } from "@/lib/firebase-admin";
 
-export async function createProfile(idToken: string, nickname: string, requestedRole: string = "user") {
+export async function createProfile(idToken: string, nickname: string, requestedRole: string = "user", adminCode?: string) {
     try {
         const decodedToken = await adminAuth.verifyIdToken(idToken);
         const uid = decodedToken.uid;
         const email = decodedToken.email;
 
-        let roleToSet = requestedRole === "admin" ? "admin" : "user";
+        let roleToSet = "user";
+
+        if (requestedRole === "admin") {
+            const masterCode = process.env.ADMIN_SECRET_CODE || "admin123"; // Fallback for safety during setup
+            if (adminCode !== masterCode) {
+                return { success: false, error: "Invalid Admin Secret Code" };
+            }
+            roleToSet = "admin";
+        }
 
         // If they sign up as mentor, they start as 'user' but we create an application
         if (requestedRole === "mentor") {

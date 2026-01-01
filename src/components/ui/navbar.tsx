@@ -16,6 +16,7 @@ function cn(...inputs: (string | undefined | null | false)[]) {
 export function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
     const [user, setUser] = useState<User | null>(null);
+    const [userRole, setUserRole] = useState<string | null>(null);
     const pathname = usePathname();
 
     // Listen to auth state changes
@@ -23,6 +24,12 @@ export function Navbar() {
         if (!auth) return; // Safety check
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
             setUser(user);
+            if (user) {
+                const token = await user.getIdTokenResult();
+                setUserRole(token.claims.role as string || "user");
+            } else {
+                setUserRole(null);
+            }
         });
         return () => unsubscribe();
     }, []);
@@ -66,6 +73,11 @@ export function Navbar() {
                 <div className="hidden md:flex items-center gap-4">
                     {user ? (
                         <div className="flex items-center gap-4">
+                            {userRole === "admin" && (
+                                <Link href="/admin" className="text-sm font-semibold text-primary hover:text-primary/80 px-2">
+                                    Admin
+                                </Link>
+                            )}
                             <Link href="/dashboard" className="text-sm font-medium text-muted-foreground hover:text-primary">
                                 Dashboard
                             </Link>
@@ -121,13 +133,24 @@ export function Navbar() {
                     })}
                     <div className="border-t border-border pt-4 flex flex-col gap-2">
                         {user ? (
-                            <Link
-                                href="/dashboard"
-                                className="text-sm font-medium text-muted-foreground hover:text-primary py-2"
-                                onClick={() => setIsOpen(false)}
-                            >
-                                Dashboard
-                            </Link>
+                            <>
+                                {userRole === "admin" && (
+                                    <Link
+                                        href="/admin"
+                                        className="text-sm font-bold text-primary hover:text-primary/80 py-2 border-b border-border/50"
+                                        onClick={() => setIsOpen(false)}
+                                    >
+                                        Admin Panel
+                                    </Link>
+                                )}
+                                <Link
+                                    href="/dashboard"
+                                    className="text-sm font-medium text-muted-foreground hover:text-primary py-2"
+                                    onClick={() => setIsOpen(false)}
+                                >
+                                    Dashboard
+                                </Link>
+                            </>
                         ) : (
                             <>
                                 <Link
