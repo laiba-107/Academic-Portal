@@ -64,8 +64,8 @@ export function Navbar() {
                                     key={link.href}
                                     href={link.href}
                                     className={cn(
-                                        "text-sm font-medium transition-all hover:text-primary relative py-1",
-                                        pathname === link.href ? "text-primary font-bold after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-primary after:rounded-full" : "text-muted-foreground"
+                                        "text-[13px] font-black uppercase tracking-[0.1em] transition-all hover:text-primary relative py-1",
+                                        pathname === link.href ? "text-primary after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-primary after:rounded-full" : "text-muted-foreground"
                                     )}
                                 >
                                     {link.label}
@@ -142,7 +142,7 @@ export function Navbar() {
                                 key={link.href}
                                 href={link.href}
                                 className={cn(
-                                    "text-sm font-medium transition-colors hover:text-primary py-2",
+                                    "text-xs font-black uppercase tracking-[0.15em] transition-colors hover:text-primary py-3 border-b border-border/40",
                                     pathname === link.href ? "text-primary" : "text-muted-foreground"
                                 )}
                                 onClick={() => setIsOpen(false)}

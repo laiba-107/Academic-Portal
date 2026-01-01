@@ -18,7 +18,7 @@ export default function Home() {
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-sm font-bold mb-4 animate-bounce">
             <CheckCircle2 className="h-4 w-4 text-primary-foreground" /> Your Success Story Starts Here
           </div>
-          <h1 className="text-5xl md:text-8xl font-black tracking-tight text-white leading-tight">
+          <h1 className="text-4xl md:text-8xl font-black tracking-tight text-white leading-tight">
             The Ultimate <span className="text-primary-foreground">Student</span> <br />
             Academic Portal
           </h1>
@@ -57,7 +57,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {[
               {
                 icon: <GraduationCap className="h-8 w-8" />,
@@ -76,12 +76,6 @@ export default function Home() {
                 title: "Community Forum",
                 desc: "Connect with peers, ask questions, and share insights in our moderated student community.",
                 color: "bg-emerald-500"
-              },
-              {
-                icon: <Users className="h-8 w-8" />,
-                title: "Expert Mentorship",
-                desc: "Get personalized guidance from experienced mentors who have walked the path you're on.",
-                color: "bg-orange-500"
               }
             ].map((feature, i) => (
               <div
