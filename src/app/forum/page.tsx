@@ -217,16 +217,20 @@ export default function ForumPage() {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [submitting, setSubmitting] = useState(false);
+    const [authChecking, setAuthChecking] = useState(true);
 
     useEffect(() => {
         if (!auth || !db) return;
 
         const unsubAuth = onAuthStateChanged(auth, async (u) => {
-            setUser(u);
-            if (u) {
-                const token = await u.getIdTokenResult();
-                setUserRole(token.claims.role as string || "user");
+            if (!u) {
+                window.location.href = "/login";
+                return;
             }
+            setUser(u);
+            const token = await u.getIdTokenResult();
+            setUserRole(token.claims.role as string || "user");
+            setAuthChecking(false);
         });
 
         const q = query(collection(db, "discussions"), orderBy("createdAt", "desc"));

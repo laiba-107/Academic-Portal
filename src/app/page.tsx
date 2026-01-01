@@ -101,47 +101,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Trust Quote */}
-      <section className="py-24 bg-primary text-white text-center relative overflow-hidden">
-        <div className="container relative z-10">
-          <div className="max-w-4xl mx-auto space-y-8">
-            <p className="text-2xl md:text-4xl font-medium italic leading-relaxed">
-              "StudentPortal has been a game-changer for me. I found my university through their database and secured a scholarship that made my dreams possible."
-            </p>
-            <div className="flex flex-col items-center">
-              <div className="h-16 w-16 bg-white/20 rounded-full flex items-center justify-center mb-4 text-2xl font-black">A</div>
-              <p className="font-bold text-xl uppercase tracking-widest">Student</p>
-            </div>
-          </div>
-        </div>
-        <div className="absolute top-0 right-0 p-10 opacity-10">
-          <GraduationCap className="h-96 w-96 transform rotate-12" />
-        </div>
-      </section>
 
-      {/* Call to Action Footer */}
-      <section className="py-24 bg-white text-center">
-        <div className="container">
-          <h2 className="text-4xl md:text-6xl font-black text-slate-900 mb-8">Ready to Start Your Journey?</h2>
-          <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto font-medium">
-            Join our community of over 10,000 students and get access to the best academic resources.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <Link
-              href="/signup"
-              className="px-12 py-5 bg-primary text-white text-xl font-black rounded-full shadow-2xl hover:shadow-primary/30 active:scale-95 transition-all"
-            >
-              Sign Up for Free
-            </Link>
-            <Link
-              href="/scholarships"
-              className="px-12 py-5 border-2 border-slate-200 text-slate-900 text-xl font-bold rounded-full hover:bg-slate-50 transition-all"
-            >
-              Explore Scholarships
-            </Link>
-          </div>
-        </div>
-      </section>
     </main>
   );
 }

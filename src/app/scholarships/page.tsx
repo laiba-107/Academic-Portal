@@ -1,20 +1,51 @@
-import { adminDb } from "@/lib/firebase-admin";
+"use client";
+
+import { useState, useEffect } from "react";
+import { auth } from "@/lib/firebase";
+import { onAuthStateChanged } from "firebase/auth";
 import ScholarshipGrid from "@/components/scholarship-grid";
+import { Loader2 } from "lucide-react";
 
-export const dynamic = "force-dynamic";
+// Inline data fetching or using an API would be better, 
+// but for now we'll simulate the protection on this page.
 
-async function getScholarships() {
-    try {
-        const snapshot = await adminDb.collection("scholarships").orderBy("createdAt", "asc").get();
-        return snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
-    } catch (error) {
-        console.error("Error fetching scholarships:", error);
-        return [];
-    }
-}
+export default function ScholarshipsPage() {
+    const [user, setUser] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
+    const [scholarships, setScholarships] = useState<any[]>([]);
+    const [fetching, setFetching] = useState(true);
 
-export default async function ScholarshipsPage() {
-    const scholarships = await getScholarships();
+    useEffect(() => {
+        const unsub = onAuthStateChanged(auth, (u) => {
+            if (!u) {
+                window.location.href = "/login";
+            } else {
+                setUser(u);
+                setLoading(false);
+            }
+        });
+        return () => unsub();
+    }, []);
+
+    useEffect(() => {
+        if (user) {
+            // Fetch scholarships from a temporary internal API or existing logic
+            // Since this was a server component, we need to adapt.
+            fetch("/api/scholarships")
+                .then(res => res.json())
+                .then(data => {
+                    setScholarships(data);
+                    setFetching(false);
+                })
+                .catch(() => setFetching(false));
+        }
+    }, [user]);
+
+    if (loading) return (
+        <div className="flex h-screen items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+    );
 
     return (
         <main className="min-h-[calc(100vh-64px)] w-full py-12 bg-[#f8fafc]/50">
@@ -29,13 +60,20 @@ export default async function ScholarshipsPage() {
                     </p>
                 </div>
 
-                <ScholarshipGrid scholarships={scholarships} />
-
-                {scholarships.length === 0 && (
-                    <div className="col-span-full py-20 text-center border-2 border-dashed rounded-3xl bg-white/50 backdrop-blur-sm">
-                        <h3 className="text-2xl font-semibold mb-2">No Scholarships Available</h3>
-                        <p className="text-muted-foreground">Keep checking back! New opportunities are added weekly.</p>
+                {fetching ? (
+                    <div className="flex justify-center py-20">
+                        <Loader2 className="h-8 w-8 animate-spin text-primary" />
                     </div>
+                ) : (
+                    <>
+                        <ScholarshipGrid scholarships={scholarships} />
+                        {scholarships.length === 0 && (
+                            <div className="col-span-full py-20 text-center border-2 border-dashed rounded-3xl bg-white/50 backdrop-blur-sm">
+                                <h3 className="text-2xl font-semibold mb-2">No Scholarships Available</h3>
+                                <p className="text-muted-foreground">Keep checking back! New opportunities are added weekly.</p>
+                            </div>
+                        )}
+                    </>
                 )}
             </div>
         </main>
