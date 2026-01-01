@@ -5,7 +5,8 @@ import { revalidatePath } from "next/cache";
 
 export async function createPost(title: string, content: string, authorId: string, authorName: string, authorRole: string) {
     try {
-        await adminDb.collection("discussions").add({
+        console.log("Attempting to create post:", { title, authorId, authorName });
+        const docRef = await adminDb.collection("discussions").add({
             title,
             content,
             authorId,
@@ -15,18 +16,20 @@ export async function createPost(title: string, content: string, authorId: strin
             likes: 0,
             replyCount: 0,
         });
+        console.log("Post created successfully with ID:", docRef.id);
         revalidatePath("/forum");
         return { success: true };
     } catch (error) {
-        return { success: false, error: "Failed to create post" };
+        console.error("CRITICAL ERROR: Failed to create forum post:", error);
+        return { success: false, error: "Failed to create post. Check server logs." };
     }
 }
 
 export async function createReply(threadId: string, content: string, authorId: string, authorName: string, authorRole: string) {
     try {
+        console.log("Attempting to post reply to:", threadId, "by:", authorId);
         const threadRef = adminDb.collection("discussions").doc(threadId);
 
-        // Transacton to add reply and increment count (optional, but good practice)
         await adminDb.runTransaction(async (t: any) => {
             const threadDoc = await t.get(threadRef);
             if (!threadDoc.exists) throw new Error("Thread not found");
@@ -45,10 +48,11 @@ export async function createReply(threadId: string, content: string, authorId: s
             t.update(threadRef, { replyCount: currentCount + 1 });
         });
 
-        revalidatePath("/forum"); // Not strictly needed for real-time client, but good for SEO or server cache
+        console.log("Reply posted successfully to thread:", threadId);
+        revalidatePath("/forum");
         return { success: true };
     } catch (error) {
-        console.error(error);
-        return { success: false, error: "Failed to post reply" };
+        console.error("CRITICAL ERROR: Failed to post reply:", error);
+        return { success: false, error: "Failed to post reply. Check server logs." };
     }
 }

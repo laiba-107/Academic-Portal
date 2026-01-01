@@ -2,21 +2,38 @@
 
 import { adminAuth, adminDb } from "@/lib/firebase-admin";
 
-export async function createProfile(idToken: string, nickname: string) {
+export async function createProfile(idToken: string, nickname: string, requestedRole: string = "user") {
     try {
         const decodedToken = await adminAuth.verifyIdToken(idToken);
         const uid = decodedToken.uid;
         const email = decodedToken.email;
 
-        // Set custom claim 'role: user'
-        await adminAuth.setCustomUserClaims(uid, { role: "user" });
+        let roleToSet = requestedRole === "admin" ? "admin" : "user";
+
+        // If they sign up as mentor, they start as 'user' but we create an application
+        if (requestedRole === "mentor") {
+            await adminDb.collection("mentorApplications").add({
+                uid,
+                email,
+                firstName: nickname,
+                lastName: "", // Will be filled later or just use nickname
+                expertise: "General",
+                experience: "New Applicant",
+                status: "pending",
+                createdAt: new Date().toISOString(),
+            });
+        }
+
+        // Set custom claim
+        await adminAuth.setCustomUserClaims(uid, { role: roleToSet });
 
         // Create user document in Firestore
         await adminDb.collection("users").doc(uid).set({
             uid,
             email,
             nickname,
-            role: "user",
+            role: roleToSet,
+            requestedRole: requestedRole,
             createdAt: new Date().toISOString(),
         });
 

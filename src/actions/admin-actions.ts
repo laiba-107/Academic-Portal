@@ -70,7 +70,7 @@ export async function deleteScholarship(id: string) {
 
 export async function approveApplication(applicationId: string, uid: string) {
     try {
-        await adminDb.collection("mentor_applications").doc(applicationId).update({
+        await adminDb.collection("mentorApplications").doc(applicationId).update({
             status: "approved",
             updatedAt: new Date().toISOString(),
         });
@@ -88,7 +88,7 @@ export async function approveApplication(applicationId: string, uid: string) {
 
 export async function rejectApplication(applicationId: string) {
     try {
-        await adminDb.collection("mentor_applications").doc(applicationId).update({
+        await adminDb.collection("mentorApplications").doc(applicationId).update({
             status: "rejected",
             updatedAt: new Date().toISOString(),
         });

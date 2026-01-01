@@ -57,11 +57,18 @@ body {
   font-family: var(--font-outfit), sans-serif;
   -webkit-font-smoothing: antialiased;
 
-  /* Subtle mesh gradient background */
-  background-image:
-    radial-gradient(at 0% 0%, rgba(var(--primary-rgb), 0.05) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, rgba(var(--primary-rgb), 0.05) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(var(--primary-rgb), 0.05) 0px, transparent 50%),
-    radial-gradient(at 0% 100%, rgba(var(--primary-rgb), 0.05) 0px, transparent 50%);
+  /* Modern University Background */
+  background-image: linear-gradient(rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.92)),
+    url('https://images.unsplash.com/photo-1541339907198-e08756ebafe3?q=80&w=2070&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center;
   background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-image: linear-gradient(rgba(2, 6, 23, 0.95), rgba(2, 6, 23, 0.95)),
+      url('https://images.unsplash.com/photo-1541339907198-e08756ebafe3?q=80&w=2070&auto=format&fit=crop');
+  }
 }

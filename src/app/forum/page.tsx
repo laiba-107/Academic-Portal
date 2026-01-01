@@ -58,9 +58,13 @@ function PostItem({ post, user, userRole }: { post: Post, user: User | null, use
 
         setSubmittingReply(true);
         try {
-            await createReply(post.id, replyContent, user.uid, (user as any).displayName || "Anonymous", userRole);
-            toast.success("Reply sent");
-            setReplyContent("");
+            const result = await createReply(post.id, replyContent, user.uid, (user as any).displayName || "Anonymous", userRole);
+            if (result.success) {
+                toast.success("Reply sent");
+                setReplyContent("");
+            } else {
+                toast.error(result.error || "Failed to send reply");
+            }
         } catch (e) {
             toast.error("Failed to send reply");
         } finally {
@@ -204,11 +208,15 @@ export default function ForumPage() {
         if (!user) return;
         setSubmitting(true);
         try {
-            await createPost(title, content, user.uid, (user as any).displayName || "Anonymous", userRole);
-            toast.success("Question posted!");
-            setIsModalOpen(false);
-            setTitle("");
-            setContent("");
+            const result = await createPost(title, content, user.uid, (user as any).displayName || "Anonymous", userRole);
+            if (result.success) {
+                toast.success("Question posted!");
+                setIsModalOpen(false);
+                setTitle("");
+                setContent("");
+            } else {
+                toast.error(result.error || "Failed to post");
+            }
         } catch (e) {
             toast.error("Failed to post");
         } finally {

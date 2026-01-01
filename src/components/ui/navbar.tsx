@@ -28,7 +28,7 @@ export function Navbar() {
     }, []);
 
     const navLinks = [
-        { href: "/admissions", label: "Admissions" },
+        { href: "/", label: "Home" },
         { href: "/scholarships", label: "Scholarships" },
         { href: "/forum", label: "Forum" },
     ];

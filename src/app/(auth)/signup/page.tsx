@@ -16,6 +16,7 @@ const signupSchema = z
     .object({
         nickname: z.string().min(2, "Nickname must be at least 2 characters"),
         email: z.string().email("Invalid email address"),
+        role: z.enum(["user", "mentor", "admin"]),
         password: z.string().min(6, "Password must be at least 6 characters"),
         confirmPassword: z.string(),
     })
@@ -35,6 +36,7 @@ export default function SignupPage() {
         defaultValues: {
             nickname: "",
             email: "",
+            role: "user",
             password: "",
             confirmPassword: "",
         },
@@ -55,7 +57,7 @@ export default function SignupPage() {
             const token = await user.getIdToken();
 
             // 3. Create profile in Firestore (Server Action)
-            const result = await createProfile(token, data.nickname);
+            const result = await createProfile(token, data.nickname, data.role);
 
             if (!result.success) {
                 throw new Error(result.error || "Failed to create profile");
@@ -109,6 +111,20 @@ export default function SignupPage() {
                     {form.formState.errors.email && (
                         <p className="text-sm text-red-500">{form.formState.errors.email.message}</p>
                     )}
+                </div>
+                <div className="space-y-2">
+                    <label className="text-sm font-medium leading-none" htmlFor="role">
+                        Sign up as
+                    </label>
+                    <select
+                        {...form.register("role")}
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        id="role"
+                    >
+                        <option value="user">Student / General User</option>
+                        <option value="mentor">Mentor (Requires Admin Approval)</option>
+                        <option value="admin">Administrator</option>
+                    </select>
                 </div>
                 <div className="space-y-2">
                     <label className="text-sm font-medium leading-none" htmlFor="password">
