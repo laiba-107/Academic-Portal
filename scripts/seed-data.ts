@@ -44,7 +44,7 @@ const universities = [
         requirements: "Minimum 60–70% in FSc/Equivalent + NUST Entry Test (NET).",
         fees: "~ $2,500–$3,200 per semester for international / ~PKR 120,000 for locals.",
         departments: "Engineering, IT, Business, Natural Sciences, Architecture, Law.",
-        image: "https://images.unsplash.com/photo-1592280771190-3e2e4d571952?q=80&w=1974&auto=format&fit=crop",
+        image: "https://upload.wikimedia.org/wikipedia/commons/e/ee/NUST_Islamabad_Campus.jpg",
         country: "Pakistan",
         program: "Engineering & Tech",
         deadline: "July 2025"
@@ -57,7 +57,7 @@ const universities = [
         requirements: "High merit in FSc/A-Levels + SAT/LUMS Entry Test + Interview.",
         fees: "~PKR 23,760 per credit hour (Approx. $1,500+ per semester).",
         departments: "Business, Economics, Computer Science, Law, Social Sciences.",
-        image: "https://images.unsplash.com/photo-1519452575417-564c1401ecc0?q=80&w=2070&auto=format&fit=crop",
+        image: "https://upload.wikimedia.org/wikipedia/commons/2/23/LUMS_Building.jpg",
         country: "Pakistan",
         program: "Management & CS",
         deadline: "April 2025"
@@ -70,7 +70,7 @@ const universities = [
         requirements: "Top-tier merit + AKU Entry Test (very competitive).",
         fees: "Medical: ~10.32L per semester.",
         departments: "MBBS, Nursing, Public Health, Allied Health.",
-        image: "https://images.unsplash.com/photo-1576091160550-217359f4814c?q=80&w=2070&auto=format&fit=crop",
+        image: "https://upload.wikimedia.org/wikipedia/commons/3/3d/Aga_Khan_University_Karachi.jpg",
         country: "Pakistan",
         program: "Medicine",
         deadline: "May 2025"
@@ -83,7 +83,7 @@ const universities = [
         requirements: "Competitive Entry Test + Interview.",
         fees: "~PKR 350,000 - 450,000 per year.",
         departments: "Business Administration, Economics, Finance, Social Sciences.",
-        image: "https://images.unsplash.com/photo-152305085306e-8233a5763ffc?q=80&w=2070&auto=format&fit=crop",
+        image: "https://upload.wikimedia.org/wikipedia/commons/b/b3/IBA_Karachi_Main_Campus.jpg",
         country: "Pakistan",
         program: "Business & Social Sciences",
         deadline: "June 2025"
@@ -96,7 +96,7 @@ const universities = [
         requirements: "Minimum 60% in Intermediate + NTS NAT/CUI Test.",
         fees: "~PKR 114,000 - 118,000 per semester.",
         departments: "Computer Science, Software Engineering, Electrical Engineering, Business.",
-        image: "https://images.unsplash.com/photo-1562774053-701939374585?q=80&w=1986&auto=format&fit=crop",
+        image: "https://upload.wikimedia.org/wikipedia/commons/1/15/COMSATS_University_Islamabad.jpg",
         country: "Pakistan",
         program: "IT & Engineering",
         deadline: "Jan 2026 (Spring)"
@@ -109,7 +109,7 @@ const universities = [
         requirements: "Minimum 50-60% in HSSC + AU-CBT Entry Test.",
         fees: "CS/IT: ~PKR 127k-153k | Business: ~PKR 108k per semester.",
         departments: "Computing & AI, Aerospace, Business, Law, Social Sciences.",
-        image: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?q=80&w=2073&auto=format&fit=crop",
+        image: "https://upload.wikimedia.org/wikipedia/commons/3/3e/Air_University_Islamabad.jpg",
         country: "Pakistan",
         program: "Computing & AI",
         deadline: "July 2025"
@@ -122,7 +122,7 @@ const universities = [
         requirements: "Merit based on prior qualifications + Entry Test for specific programs.",
         fees: "Relatively low (Public sector rates).",
         departments: "Arts, Sciences, Business, Law, Pharmacy, Engineering.",
-        image: "https://images.unsplash.com/photo-1541339907198-e08756ebafe3?q=80&w=2070&auto=format&fit=crop",
+        image: "https://upload.wikimedia.org/wikipedia/commons/4/4f/University_of_the_Punjab_Main_Building.jpg",
         country: "Pakistan",
         program: "General & Professional",
         deadline: "August 2025"
@@ -135,7 +135,7 @@ const universities = [
         requirements: "FSc Pre-Engineering + ECAT Entry Test.",
         fees: "Regular: ~PKR 70k-88k | Self-Finance: ~PKR 150k+.",
         departments: "Electrical, Mechanical, Civil, Chemical, Computer Engineering.",
-        image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=2070&auto=format&fit=crop",
+        image: "https://upload.wikimedia.org/wikipedia/commons/d/df/UET_Lahore_Main_Gate.jpg",
         country: "Pakistan",
         program: "Engineering",
         deadline: "August 2025"
@@ -148,7 +148,7 @@ const universities = [
         requirements: "Merit based on HSSC + Entrance Test.",
         fees: "Standard Public Sector fees.",
         departments: "Agriculture, Food Science, Veterinary, Engineering.",
-        image: "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?q=80&w=2070&auto=format&fit=crop",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Sindh_Agriculture_University_Tandojam.jpg/1200px-Sindh_Agriculture_University_Tandojam.jpg",
         country: "Pakistan",
         program: "Agriculture",
         deadline: "September 2025"
@@ -156,6 +156,15 @@ const universities = [
 ];
 
 const scholarships = [
+    {
+        name: "Jenabai Hussainali Shariff and Family Scholarship",
+        category: "Undergraduate Scholarship",
+        amount: "Variable (Merit-cum-Need Based)",
+        eligibility: "High academic merit, financial need, undergraduate enrollment.",
+        description: "A prestigious scholarship established to support meritorious students from disadvantaged backgrounds in their undergraduate studies.",
+        link: "https://www.google.com/search?q=Jenabai+Hussainali+Shariff+and+Family+Scholarship",
+        deadline: "August 2025"
+    },
     {
         name: "Ehsaas Undergraduate Scholarship (BISP)",
         category: "Undergraduate Scholarship",
@@ -173,15 +182,6 @@ const scholarships = [
         description: "Financial assistance provided by HEC to talented but needy students.",
         link: "https://www.hec.gov.pk/english/scholarshipsgrants/pages/default.aspx",
         deadline: "Check HEC Portal"
-    },
-    {
-        name: "LUMS National Outreach Programme (NOP)",
-        category: "Undergraduate Scholarship",
-        amount: "100% Funding (Tuition + Books + Hostel + Stipend)",
-        eligibility: "Exceptional matric/FSc results + financial need.",
-        description: "LUMS signature programme to provide quality education to brilliant students regardless of their financial status.",
-        link: "https://nop.lums.edu.pk/",
-        deadline: "March each year"
     },
     {
         name: "Chevening Scholarship (UK)",
@@ -209,23 +209,23 @@ const scholarships = [
         description: "Covers undergraduate programs in various Chinese universities.",
         link: "https://www.campuschina.org/",
         deadline: "Feb - March 2025"
-    },
-    {
-        name: "DAAD Scholarships (Germany)",
-        category: "Graduate Program",
-        amount: "Tuition Free + Living Allowance (~€934/month)",
-        eligibility: "Bachelors degree + relevant work experience.",
-        description: "Study in top German universities with full funding for Master's programs.",
-        link: "https://www.daad.de/",
-        deadline: "Oct - Dec (for next year)"
     }
 ];
+
+async function clearCollection(collectionName: string) {
+    const snapshot = await db.collection(collectionName).get();
+    const batch = db.batch();
+    snapshot.docs.forEach((doc) => batch.delete(doc.ref));
+    await batch.commit();
+    console.log(`Cleared collection: ${collectionName}`);
+}
 
 async function seed() {
     console.log("Starting seed...");
 
-    // Clear existing (optional, but good for fresh start)
-    // For safety, we'll just add.
+    // Clear existing for a fresh start
+    await clearCollection("admissions");
+    await clearCollection("scholarships");
 
     for (const uni of universities) {
         await db.collection("admissions").add({

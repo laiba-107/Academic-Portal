@@ -21,14 +21,95 @@ interface University {
 
 export default function UniversityGrid({ universities }: { universities: University[] }) {
     const [selectedUni, setSelectedUni] = useState<University | null>(null);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [locationFilter, setLocationFilter] = useState("All Locations");
+    const [typeFilter, setTypeFilter] = useState("All Types");
+    const [programFilter, setProgramFilter] = useState("All Programs");
+
+    // Dynamic filter options
+    const locations = ["All Locations", ...Array.from(new Set(universities.map(u => u.location)))];
+    const types = ["All Types", ...Array.from(new Set(universities.map(u => u.type)))];
+    const programs = ["All Programs", ...Array.from(new Set(universities.map(u => u.program)))];
+
+    const filteredUniversities = universities.filter(u => {
+        const matchesSearch = u.university.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            u.program.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesLocation = locationFilter === "All Locations" || u.location === locationFilter;
+        const matchesType = typeFilter === "All Types" || u.type === typeFilter;
+        const matchesProgram = programFilter === "All Programs" || u.program === programFilter;
+
+        return matchesSearch && matchesLocation && matchesType && matchesProgram;
+    });
 
     return (
         <>
+            {/* Filter Section */}
+            <div className="mb-12 space-y-6">
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                    <div className="relative">
+                        <input
+                            type="text"
+                            placeholder="Search university or program..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full pl-12 pr-4 py-4 bg-white border-2 border-slate-100 rounded-2xl focus:border-primary outline-none transition-all shadow-sm"
+                        />
+                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                            <Globe className="h-5 w-5" />
+                        </div>
+                    </div>
+
+                    <select
+                        value={locationFilter}
+                        onChange={(e) => setLocationFilter(e.target.value)}
+                        className="w-full px-4 py-4 bg-white border-2 border-slate-100 rounded-2xl focus:border-primary outline-none transition-all shadow-sm cursor-pointer appearance-none font-bold text-slate-700"
+                    >
+                        {locations.map(loc => <option key={loc} value={loc}>{loc}</option>)}
+                    </select>
+
+                    <select
+                        value={typeFilter}
+                        onChange={(e) => setTypeFilter(e.target.value)}
+                        className="w-full px-4 py-4 bg-white border-2 border-slate-100 rounded-2xl focus:border-primary outline-none transition-all shadow-sm cursor-pointer appearance-none font-bold text-slate-700"
+                    >
+                        {types.map(t => <option key={t} value={t}>{t}</option>)}
+                    </select>
+
+                    <select
+                        value={programFilter}
+                        onChange={(e) => setProgramFilter(e.target.value)}
+                        className="w-full px-4 py-4 bg-white border-2 border-slate-100 rounded-2xl focus:border-primary outline-none transition-all shadow-sm cursor-pointer appearance-none font-bold text-slate-700"
+                    >
+                        {programs.map(p => <option key={p} value={p}>{p}</option>)}
+                    </select>
+                </div>
+
+                <div className="flex justify-between items-center text-sm font-bold text-slate-400">
+                    <p>Showing {filteredUniversities.length} universities</p>
+                    {(searchTerm || locationFilter !== "All Locations" || typeFilter !== "All Types" || programFilter !== "All Programs") && (
+                        <button
+                            onClick={() => {
+                                setSearchTerm("");
+                                setLocationFilter("All Locations");
+                                setTypeFilter("All Types");
+                                setProgramFilter("All Programs");
+                            }}
+                            className="text-primary hover:underline transition-all"
+                        >
+                            Reset all filters
+                        </button>
+                    )}
+                </div>
+            </div>
+
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-                {universities.map((item) => (
+                {filteredUniversities.map((item) => (
                     <motion.div
                         key={item.id}
-                        layoutId={`card-${item.id}`}
+                        layout
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.9 }}
                         onClick={() => setSelectedUni(item)}
                         className="group relative flex flex-col overflow-hidden rounded-3xl border-2 border-slate-200 bg-white shadow-xl hover:shadow-2xl hover:border-primary transition-all duration-300 cursor-pointer h-full"
                     >
