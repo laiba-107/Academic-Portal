@@ -9,6 +9,10 @@ export async function POST(req: Request) {
     try {
         const { message, history } = await req.json();
 
+        if (!process.env.GEMINI_API_KEY) {
+            throw new Error("GEMINI_API_KEY is not defined in environment variables.");
+        }
+
         // 1. Fetch Admissions & Scholarships data for context
         const [admissionsSnap, scholarshipsSnap] = await Promise.all([
             adminDb.collection("admissions").get(),
@@ -66,8 +70,12 @@ ${context}
         const reply = result.response.text();
 
         return NextResponse.json({ reply });
-    } catch (error) {
-        console.error("Chat API Error:", error);
+    } catch (error: any) {
+        console.error("Chat API Error Detailed:", {
+            message: error.message,
+            stack: error.stack,
+            response: error.response?.data
+        });
         return NextResponse.json({
             reply: "I'm having trouble connecting to my AI brain right now. Please try again in a moment!"
         });
