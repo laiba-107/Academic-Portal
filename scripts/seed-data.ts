@@ -44,7 +44,7 @@ const universities = [
         requirements: "Minimum 60–70% in FSc/Equivalent + NUST Entry Test (NET).",
         fees: "~ $2,500–$3,200 per semester for international / ~PKR 120,000 for locals.",
         departments: "Engineering, IT, Business, Natural Sciences, Architecture, Law.",
-        image: "https://upload.wikimedia.org/wikipedia/commons/e/ee/NUST_Islamabad_Campus.jpg",
+        image: "/images/nust.png",
         country: "Pakistan",
         program: "Engineering & Tech",
         deadline: "July 2025"
@@ -57,7 +57,7 @@ const universities = [
         requirements: "High merit in FSc/A-Levels + SAT/LUMS Entry Test + Interview.",
         fees: "~PKR 23,760 per credit hour (Approx. $1,500+ per semester).",
         departments: "Business, Economics, Computer Science, Law, Social Sciences.",
-        image: "https://upload.wikimedia.org/wikipedia/commons/2/23/LUMS_Building.jpg",
+        image: "/images/lums.png",
         country: "Pakistan",
         program: "Management & CS",
         deadline: "April 2025"
@@ -70,7 +70,7 @@ const universities = [
         requirements: "Top-tier merit + AKU Entry Test (very competitive).",
         fees: "Medical: ~10.32L per semester.",
         departments: "MBBS, Nursing, Public Health, Allied Health.",
-        image: "https://upload.wikimedia.org/wikipedia/commons/3/3d/Aga_Khan_University_Karachi.jpg",
+        image: "/images/aku.png",
         country: "Pakistan",
         program: "Medicine",
         deadline: "May 2025"
@@ -83,7 +83,7 @@ const universities = [
         requirements: "Competitive Entry Test + Interview.",
         fees: "~PKR 350,000 - 450,000 per year.",
         departments: "Business Administration, Economics, Finance, Social Sciences.",
-        image: "https://upload.wikimedia.org/wikipedia/commons/b/b3/IBA_Karachi_Main_Campus.jpg",
+        image: "/images/iba.jpg",
         country: "Pakistan",
         program: "Business & Social Sciences",
         deadline: "June 2025"
@@ -96,7 +96,7 @@ const universities = [
         requirements: "Minimum 60% in Intermediate + NTS NAT/CUI Test.",
         fees: "~PKR 114,000 - 118,000 per semester.",
         departments: "Computer Science, Software Engineering, Electrical Engineering, Business.",
-        image: "https://upload.wikimedia.org/wikipedia/commons/1/15/COMSATS_University_Islamabad.jpg",
+        image: "/images/comsats.jpg",
         country: "Pakistan",
         program: "IT & Engineering",
         deadline: "Jan 2026 (Spring)"
@@ -109,7 +109,7 @@ const universities = [
         requirements: "Minimum 50-60% in HSSC + AU-CBT Entry Test.",
         fees: "CS/IT: ~PKR 127k-153k | Business: ~PKR 108k per semester.",
         departments: "Computing & AI, Aerospace, Business, Law, Social Sciences.",
-        image: "https://upload.wikimedia.org/wikipedia/commons/3/3e/Air_University_Islamabad.jpg",
+        image: "/images/air_uni.png",
         country: "Pakistan",
         program: "Computing & AI",
         deadline: "July 2025"
@@ -122,7 +122,7 @@ const universities = [
         requirements: "Merit based on prior qualifications + Entry Test for specific programs.",
         fees: "Relatively low (Public sector rates).",
         departments: "Arts, Sciences, Business, Law, Pharmacy, Engineering.",
-        image: "https://upload.wikimedia.org/wikipedia/commons/4/4f/University_of_the_Punjab_Main_Building.jpg",
+        image: "/images/punjab_uni.jpg",
         country: "Pakistan",
         program: "General & Professional",
         deadline: "August 2025"
@@ -135,7 +135,7 @@ const universities = [
         requirements: "FSc Pre-Engineering + ECAT Entry Test.",
         fees: "Regular: ~PKR 70k-88k | Self-Finance: ~PKR 150k+.",
         departments: "Electrical, Mechanical, Civil, Chemical, Computer Engineering.",
-        image: "https://upload.wikimedia.org/wikipedia/commons/d/df/UET_Lahore_Main_Gate.jpg",
+        image: "/images/uet_lahore.png",
         country: "Pakistan",
         program: "Engineering",
         deadline: "August 2025"
@@ -148,7 +148,7 @@ const universities = [
         requirements: "Merit based on HSSC + Entrance Test.",
         fees: "Standard Public Sector fees.",
         departments: "Agriculture, Food Science, Veterinary, Engineering.",
-        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Sindh_Agriculture_University_Tandojam.jpg/1200px-Sindh_Agriculture_University_Tandojam.jpg",
+        image: "/images/sindh_ag_uni.jpg",
         country: "Pakistan",
         program: "Agriculture",
         deadline: "September 2025"
