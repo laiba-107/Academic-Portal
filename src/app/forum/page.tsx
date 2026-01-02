@@ -271,87 +271,89 @@ export default function ForumPage() {
     };
 
     return (
-        <div className="container py-8 max-w-4xl">
-            <div className="flex items-center justify-between mb-8">
-                <div>
-                    <h1 className="text-3xl font-bold text-primary">Discussion Forum</h1>
-                    <p className="text-muted-foreground">Ask questions and get help from mentors.</p>
+        <div className="min-h-[calc(100vh-64px)] bg-[#f0f9ff] py-12">
+            <div className="container max-w-4xl px-4 md:px-0">
+                <div className="flex items-center justify-between mb-8">
+                    <div>
+                        <h1 className="text-3xl font-bold text-primary">Discussion Forum</h1>
+                        <p className="text-muted-foreground">Ask questions and get help from mentors.</p>
+                    </div>
+                    <button
+                        onClick={() => setIsModalOpen(true)}
+                        className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-colors inline-flex items-center font-medium shadow-lg shadow-primary/20"
+                    >
+                        <MessageSquare className="mr-2 h-4 w-4" />
+                        Ask Question
+                    </button>
                 </div>
-                <button
-                    onClick={() => setIsModalOpen(true)}
-                    className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-colors inline-flex items-center font-medium"
-                >
-                    <MessageSquare className="mr-2 h-4 w-4" />
-                    Ask Question
-                </button>
+
+                <div className="space-y-6">
+                    {loading && <div className="text-center py-10"><Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" /></div>}
+
+                    {!loading && posts.length === 0 && (
+                        <div className="text-center py-12 border border-dashed rounded-xl bg-white/50">
+                            <p className="text-muted-foreground">No discussions yet. Be the first to ask!</p>
+                        </div>
+                    )}
+
+                    {posts.map((post) => (
+                        <PostItem key={post.id} post={post} user={user} userRole={userRole} />
+                    ))}
+                </div>
+
+                <AnimatePresence>
+                    {isModalOpen && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                            <motion.div
+                                initial={{ scale: 0.95, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                exit={{ scale: 0.95, opacity: 0 }}
+                                className="bg-background w-full max-w-lg rounded-xl border border-border shadow-xl p-6"
+                            >
+                                <h2 className="text-xl font-bold mb-4">Ask a Question</h2>
+                                <form onSubmit={handleCreatePost} className="space-y-4">
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium">Title</label>
+                                        <input
+                                            value={title}
+                                            onChange={e => setTitle(e.target.value)}
+                                            className="w-full flex h-10 rounded-md border border-input bg-background px-3"
+                                            placeholder="What's your question?"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium">Details</label>
+                                        <textarea
+                                            value={content}
+                                            onChange={e => setContent(e.target.value)}
+                                            className="w-full flex min-h-[100px] rounded-md border border-input bg-background px-3 py-2"
+                                            placeholder="Describe your question in detail..."
+                                            required
+                                        />
+                                    </div>
+                                    <div className="flex justify-end gap-3 pt-2">
+                                        <button
+                                            type="button"
+                                            onClick={() => setIsModalOpen(false)}
+                                            className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            type="submit"
+                                            disabled={submitting}
+                                            className="bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-medium hover:bg-primary/90 disabled:opacity-50"
+                                        >
+                                            {submitting ? <Loader2 className="animate-spin h-4 w-4" /> : "Post Question"}
+                                        </button>
+                                    </div>
+                                </form>
+                            </motion.div>
+                        </div>
+                    )}
+                </AnimatePresence>
             </div>
-
-            <div className="space-y-6">
-                {loading && <div className="text-center py-10"><Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" /></div>}
-
-                {!loading && posts.length === 0 && (
-                    <div className="text-center py-12 border border-dashed rounded-xl">
-                        <p className="text-muted-foreground">No discussions yet. Be the first to ask!</p>
-                    </div>
-                )}
-
-                {posts.map((post) => (
-                    <PostItem key={post.id} post={post} user={user} userRole={userRole} />
-                ))}
-            </div>
-
-            <AnimatePresence>
-                {isModalOpen && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                        <motion.div
-                            initial={{ scale: 0.95, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.95, opacity: 0 }}
-                            className="bg-background w-full max-w-lg rounded-xl border border-border shadow-xl p-6"
-                        >
-                            <h2 className="text-xl font-bold mb-4">Ask a Question</h2>
-                            <form onSubmit={handleCreatePost} className="space-y-4">
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium">Title</label>
-                                    <input
-                                        value={title}
-                                        onChange={e => setTitle(e.target.value)}
-                                        className="w-full flex h-10 rounded-md border border-input bg-background px-3"
-                                        placeholder="What's your question?"
-                                        required
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium">Details</label>
-                                    <textarea
-                                        value={content}
-                                        onChange={e => setContent(e.target.value)}
-                                        className="w-full flex min-h-[100px] rounded-md border border-input bg-background px-3 py-2"
-                                        placeholder="Describe your question in detail..."
-                                        required
-                                    />
-                                </div>
-                                <div className="flex justify-end gap-3 pt-2">
-                                    <button
-                                        type="button"
-                                        onClick={() => setIsModalOpen(false)}
-                                        className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground"
-                                    >
-                                        Cancel
-                                    </button>
-                                    <button
-                                        type="submit"
-                                        disabled={submitting}
-                                        className="bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-medium hover:bg-primary/90 disabled:opacity-50"
-                                    >
-                                        {submitting ? <Loader2 className="animate-spin h-4 w-4" /> : "Post Question"}
-                                    </button>
-                                </div>
-                            </form>
-                        </motion.div>
-                    </div>
-                )}
-            </AnimatePresence>
         </div>
     );
 }

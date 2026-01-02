@@ -94,13 +94,13 @@ export default function ChatbotPage() {
     };
 
     if (loading) return (
-        <div className="flex h-screen items-center justify-center bg-slate-50">
+        <div className="flex h-screen items-center justify-center bg-[#f0f9ff]">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
     );
 
     return (
-        <main className="min-h-[calc(100vh-64px)] bg-slate-50 flex flex-col items-center py-12 px-4">
+        <main className="min-h-[calc(100vh-64px)] bg-[#f0f9ff] flex flex-col items-center py-12 px-4">
             <div className="w-full max-w-4xl bg-white rounded-[2.5rem] shadow-2xl border-2 border-slate-100 flex flex-col h-[75vh] overflow-hidden relative">
 
                 {/* Header */}

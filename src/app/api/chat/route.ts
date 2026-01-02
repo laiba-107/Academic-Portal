@@ -54,19 +54,27 @@ CONTEXT:
 ${context}
 `;
 
-        // 4. Generate Response using Gemini
-        const chat = model.startChat({
-            history: history?.map((m: any) => ({
-                role: m.role === "user" ? "user" : "model",
-                parts: [{ text: m.content }]
-            })) || [],
+        // 4. Initialize Model with System Instruction
+        const modelWithSystem = genAI.getGenerativeModel({
+            model: "gemini-1.5-flash",
+            systemInstruction: systemPrompt
         });
 
-        const result = await chat.sendMessage([
-            { text: systemPrompt },
-            { text: `User Question: ${message}` }
-        ]);
+        // 5. Clean History (Ensure it starts with 'user')
+        let cleanedHistory = history?.map((m: any) => ({
+            role: m.role === "user" ? "user" : "model",
+            parts: [{ text: m.content }]
+        })) || [];
 
+        if (cleanedHistory.length > 0 && cleanedHistory[0].role === "model") {
+            cleanedHistory.shift(); // Remove first message if it's from bot
+        }
+
+        const chat = modelWithSystem.startChat({
+            history: cleanedHistory,
+        });
+
+        const result = await chat.sendMessage(message);
         const reply = result.response.text();
 
         return NextResponse.json({ reply });

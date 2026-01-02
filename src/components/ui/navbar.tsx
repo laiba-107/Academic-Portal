@@ -43,14 +43,14 @@ export function Navbar() {
     ];
 
     return (
-        <nav className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-md">
+        <nav className="sticky top-0 z-50 w-full border-b border-white/5 bg-slate-900/95 backdrop-blur-md shadow-xl">
             <div className="container flex h-16 items-center justify-between px-4 md:px-6">
                 <div className="flex items-center gap-8">
                     <Link href="/" className="flex items-center gap-2">
                         <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-lg shadow-primary/20">
                             <GraduationCap className="h-6 w-6" />
                         </div>
-                        <span className="text-xl font-bold tracking-tight text-primary">StudentPortal</span>
+                        <span className="text-xl font-bold tracking-tight text-white">StudentPortal</span>
                     </Link>
 
                     {/* Desktop Nav */}
@@ -65,8 +65,8 @@ export function Navbar() {
                                     key={link.href}
                                     href={link.href}
                                     className={cn(
-                                        "text-[13px] font-black uppercase tracking-[0.1em] transition-all hover:text-primary relative py-1",
-                                        pathname === link.href ? "text-primary after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-primary after:rounded-full" : "text-muted-foreground"
+                                        "text-[13px] font-black uppercase tracking-[0.1em] transition-all hover:text-white relative py-1",
+                                        pathname === link.href ? "text-white after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-primary after:rounded-full" : "text-slate-400"
                                     )}
                                 >
                                     {link.label}
@@ -110,7 +110,7 @@ export function Navbar() {
                         <div className="flex items-center gap-3">
                             <Link
                                 href="/login"
-                                className="text-sm font-bold text-muted-foreground hover:text-primary px-4 py-2 transition-colors"
+                                className="text-sm font-bold text-slate-300 hover:text-white px-4 py-2 transition-colors"
                             >
                                 Log in
                             </Link>
