@@ -19,9 +19,9 @@ export async function POST(req: Request) {
         const context = `
 AUTHORITATIVE PORTAL DATA (Primary source for specific fees and deadlines):
 UNIVERSITIES:
-${admissionsSnap.docs.map(u => `- ${u.data().university} in ${u.data().location}. Fees: ${u.data().fees}`).join("\n")}
+${admissionsSnap.docs.map((u: any) => `- ${u.data().university} in ${u.data().location}. Fees: ${u.data().fees}`).join("\n")}
 SCHOLARSHIPS:
-${scholarshipsSnap.docs.map(s => `- ${s.data().name} (${s.data().category})`).join("\n")}
+${scholarshipsSnap.docs.map((s: any) => `- ${s.data().name} (${s.data().category})`).join("\n")}
 `;
 
         // 2. Direct REST API Call (Avoids library 404s on Render)
