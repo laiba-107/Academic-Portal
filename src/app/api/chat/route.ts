@@ -2,16 +2,16 @@ import { NextResponse } from "next/server";
 import { adminDb } from "@/lib/firebase-admin";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
 export async function POST(req: Request) {
     try {
         const { message, history } = await req.json();
 
         if (!process.env.GEMINI_API_KEY) {
-            throw new Error("GEMINI_API_KEY is not defined in environment variables.");
+            console.error("DEBUG: GEMINI_API_KEY is missing.");
+            return NextResponse.json({ reply: "API Key is missing. Please check server settings." });
         }
+
+        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
         // 1. Fetch Admissions & Scholarships data for context
         const [admissionsSnap, scholarshipsSnap] = await Promise.all([
@@ -54,27 +54,30 @@ CONTEXT:
 ${context}
 `;
 
-        // 4. Initialize Model with System Instruction
-        const modelWithSystem = genAI.getGenerativeModel({
-            model: "gemini-1.5-flash",
-            systemInstruction: systemPrompt
-        });
+        // 3. Prepare Model
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-        // 5. Clean History (Ensure it starts with 'user')
+        // 4. Clean History (Ensure it starts with 'user')
         let cleanedHistory = history?.map((m: any) => ({
             role: m.role === "user" ? "user" : "model",
             parts: [{ text: m.content }]
         })) || [];
 
+        // In Gemini, history MUST start with 'user'
         if (cleanedHistory.length > 0 && cleanedHistory[0].role === "model") {
-            cleanedHistory.shift(); // Remove first message if it's from bot
+            cleanedHistory.shift();
         }
 
-        const chat = modelWithSystem.startChat({
+        const chat = model.startChat({
             history: cleanedHistory,
         });
 
-        const result = await chat.sendMessage(message);
+        // Prepend system prompt to the first message if history is empty to set context
+        const finalMessage = cleanedHistory.length === 0
+            ? `${systemPrompt}\n\nUSER QUESTION: ${message}`
+            : message;
+
+        const result = await chat.sendMessage(finalMessage);
         const reply = result.response.text();
 
         return NextResponse.json({ reply });
