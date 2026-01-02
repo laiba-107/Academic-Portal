@@ -11,7 +11,8 @@ export async function POST(req: Request) {
             return NextResponse.json({ reply: "API Key is missing. Please check server settings." });
         }
 
-        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+        const apiKey = process.env.GEMINI_API_KEY.trim();
+        const genAI = new GoogleGenerativeAI(apiKey);
 
         // 1. Fetch Admissions & Scholarships data for context
         const [admissionsSnap, scholarshipsSnap] = await Promise.all([
@@ -43,19 +44,13 @@ ${scholarships.map((s: any) => `- ${s.name} (${s.category}). Amount: ${s.amount}
 You are the "Academic Portal Assistant", a professional and helpful consultant for students seeking higher education and scholarships in Pakistan.
 
 GUIDELINES:
-1. Use the provided AUTHORITATIVE DATA as your primary source of truth. If a user asks about a specific university or scholarship in this list, quote these details accurately.
-2. If the information is NOT in the authoritative data, use your general knowledge of Pakistani and international universities to provide a helpful, comprehensive answer.
-3. If a user asks for comparisons (e.g. NUST vs LUMS), provide a detailed breakdown based on rankings, fees, and programs.
-4. If a user asks about "web scraping" or "latest updates", explain that you have access to a vast database of academic information up to your last training and the portal's current records.
-5. Be conversational, encouraging, and precise.
-6. Always suggest checking the official websites mentioned in the data for the absolute latest updates.
+1. Use the provided AUTHORITATIVE DATA as your primary source of truth.
+2. If the information is NOT in the authoritative data, use your general knowledge.
+3. Be conversational, encouraging, and precise.
 
 CONTEXT:
 ${context}
 `;
-
-        // 3. Prepare Model
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
         // 4. Clean History (Ensure it starts with 'user')
         let cleanedHistory = history?.map((m: any) => ({
@@ -63,23 +58,32 @@ ${context}
             parts: [{ text: m.content }]
         })) || [];
 
-        // In Gemini, history MUST start with 'user'
         if (cleanedHistory.length > 0 && cleanedHistory[0].role === "model") {
             cleanedHistory.shift();
         }
 
-        const chat = model.startChat({
-            history: cleanedHistory,
-        });
-
-        // Prepend system prompt to the first message if history is empty to set context
         const finalMessage = cleanedHistory.length === 0
             ? `${systemPrompt}\n\nUSER QUESTION: ${message}`
             : message;
 
-        const result = await chat.sendMessage(finalMessage);
-        const reply = result.response.text();
+        // 5. Try Primary Model (Flash) with Fallback (Pro)
+        let modelId = "gemini-1.5-flash";
+        let result;
 
+        try {
+            const model = genAI.getGenerativeModel({ model: modelId });
+            const chat = model.startChat({ history: cleanedHistory });
+            result = await chat.sendMessage(finalMessage);
+        } catch (firstError: any) {
+            console.error("Primary Model Failed, trying fallback:", firstError.message);
+
+            // Fallback to gemini-pro (Older but stable)
+            const fallbackModel = genAI.getGenerativeModel({ model: "gemini-pro" });
+            const chat = fallbackModel.startChat({ history: cleanedHistory });
+            result = await chat.sendMessage(finalMessage);
+        }
+
+        const reply = result.response.text();
         return NextResponse.json({ reply });
     } catch (error: any) {
         console.error("Chat API Error Detailed:", {
