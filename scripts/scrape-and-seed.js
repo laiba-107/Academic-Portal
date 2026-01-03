@@ -34,8 +34,8 @@ async function scrapeAndSeed(url) {
 
         // 2. Use Gemini to Parse Data
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        // STRICT ENFORCEMENT: API v1 (implicit in library) and models/gemini-1.5-flash
-        const modelName = "models/gemini-1.5-flash";
+        // STRICT ENFORCEMENT: API v1 (implicit in library) and models/gemini-2.0-flash
+        const modelName = "models/gemini-2.0-flash";
         const model = genAI.getGenerativeModel({ model: modelName });
 
         const prompt = `
