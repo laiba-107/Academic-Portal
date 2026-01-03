@@ -6,7 +6,7 @@ const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
 
 export const STRICT_CONFIG = {
     apiVersion: 'v1',
-    model: 'models/gemini-2.0-flash',
+    model: 'models/gemini-2.5-flash',
     method: 'generateContent'
 };
 
