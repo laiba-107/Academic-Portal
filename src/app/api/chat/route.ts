@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { adminDb } from "@/lib/firebase-admin";
-import { STRICT_CONFIG, validateRequest, logGeminiRequest, getValidatedModels } from "@/lib/gemini";
+import { STRICT_CONFIG, validateRequest, logGeminiRequest, getModelCache, logCacheStatus } from "@/lib/gemini";
 
 export async function POST(req: Request) {
     const timestamp = new Date().toISOString();
@@ -16,19 +16,16 @@ export async function POST(req: Request) {
 
         const apiKey = process.env.GEMINI_API_KEY.trim();
 
-        // 1. Mandatory Pre-Request Validation
+        // 1. Model Discovery & Caching (Advisory/Discovery Phase)
+        const cache = await getModelCache(apiKey);
+        logCacheStatus(cache);
+
+        // 2. Mandatory Pre-Request Validation (Primary model is NEVER blocked)
         try {
-            validateRequest(STRICT_CONFIG);
+            validateRequest(STRICT_CONFIG.model, STRICT_CONFIG.apiVersion, STRICT_CONFIG.method, cache);
         } catch (vError: any) {
             logGeminiRequest(STRICT_CONFIG.model, STRICT_CONFIG.apiVersion, "direct", `VALIDATION_FAILED: ${vError.message}`);
             return NextResponse.json({ reply: "Invalid API Configuration. Request blocked." });
-        }
-
-        // 2. Model Discovery & Caching Check
-        const supportedModels = await getValidatedModels(apiKey);
-        if (supportedModels.length > 0 && !supportedModels.includes(STRICT_CONFIG.model)) {
-            logGeminiRequest(STRICT_CONFIG.model, STRICT_CONFIG.apiVersion, "direct", "MODEL_NOT_IN_CACHE");
-            return NextResponse.json({ reply: "Requested model not supported by your API key." });
         }
 
         // 3. Fetch Local context (The "Scraping" equivalent for this route)
@@ -81,7 +78,7 @@ ${scholarshipsSnap.docs.map((s: any) => `- ${s.data().name}`).join("\n")}
         // Handle 404 specifically as per instructions
         if (response.status === 404) {
             console.error("404 Error: Forcing model and refreshing cache...");
-            await getValidatedModels(apiKey); // Refresh cache
+            await getModelCache(apiKey); // Refresh cache
             // Force retry once same config
             response = await fetch(url, apiRequest);
         }

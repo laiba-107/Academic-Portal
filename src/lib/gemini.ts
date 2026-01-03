@@ -10,40 +10,92 @@ export const STRICT_CONFIG = {
     method: 'generateContent'
 };
 
-async function fetchAndCacheModels(apiKey: string) {
+export type CacheStatus = 'HEALTHY' | 'DEGRADED' | 'EMPTY';
+
+interface ModelCache {
+    timestamp: number;
+    models: string[];
+    status: CacheStatus;
+}
+
+async function fetchAndCacheModels(apiKey: string): Promise<ModelCache> {
     try {
         const url = `https://generativelanguage.googleapis.com/v1/models?key=${apiKey}`;
         const response = await fetch(url);
         if (!response.ok) throw new Error(`Failed to fetch models: ${response.statusText}`);
 
         const data = await response.json();
-        const cache = {
+        // Do NOT filter models incorrectly - cache all returned models
+        const modelNames = data.models.map((m: any) => m.name);
+
+        const cache: ModelCache = {
             timestamp: Date.now(),
-            models: data.models.map((m: any) => m.name)
+            models: modelNames,
+            status: 'HEALTHY'
         };
 
         fs.writeFileSync(CACHE_FILE, JSON.stringify(cache));
-        return cache.models;
+        return cache;
     } catch (error) {
-        console.error("❌ Gemini Cache Error:", error);
-        return [];
+        console.error("❌ Gemini Discovery Error:", error);
+        const degradedCache: ModelCache = {
+            timestamp: Date.now(),
+            models: [],
+            status: 'DEGRADED'
+        };
+        // Don't overwrite healthy file with degraded data unless it's gone
+        if (!fs.existsSync(CACHE_FILE)) {
+            fs.writeFileSync(CACHE_FILE, JSON.stringify(degradedCache));
+        }
+        return degradedCache;
     }
 }
 
-export async function getValidatedModels(apiKey: string): Promise<string[]> {
+export async function getModelCache(apiKey: string): Promise<ModelCache> {
     if (fs.existsSync(CACHE_FILE)) {
-        const cache = JSON.parse(fs.readFileSync(CACHE_FILE, 'utf-8'));
-        if (Date.now() - cache.timestamp < CACHE_DURATION) {
-            return cache.models;
+        try {
+            const cache: ModelCache = JSON.parse(fs.readFileSync(CACHE_FILE, 'utf-8'));
+            if (Date.now() - cache.timestamp < CACHE_DURATION) {
+                return cache;
+            }
+        } catch (e) {
+            console.error("❌ Error reading Gemini cache:", e);
         }
     }
-    return await fetchAndCacheModels(apiKey);
+    // If cache doesn't exist, is expired, or unreadable, fetch new models
+    const fetchedCache = await fetchAndCacheModels(apiKey);
+    if (fetchedCache.status === 'DEGRADED' && !fs.existsSync(CACHE_FILE)) {
+        // If fetching failed and no cache file exists, create an EMPTY cache
+        return { timestamp: Date.now(), models: [], status: 'EMPTY' };
+    }
+    return fetchedCache;
 }
 
-export function validateRequest(config: typeof STRICT_CONFIG) {
-    if (config.apiVersion !== 'v1') throw new Error(`Invalid API Version: ${config.apiVersion}`);
-    if (config.model !== 'models/gemini-1.5-flash') throw new Error(`Invalid Model: ${config.model}`);
-    if (config.method !== 'generateContent') throw new Error(`Invalid Method: ${config.method}`);
+export function validateRequest(model: string, apiVersion: string, method: string, cache: ModelCache) {
+    // 1. Never Block the Primary Model (Unconditional Approval)
+    if (model === STRICT_CONFIG.model) {
+        return true;
+    }
+
+    // 2. Strict validation for other models
+    if (apiVersion !== 'v1') throw new Error(`Invalid API Version: ${apiVersion}`);
+    if (method !== 'generateContent') throw new Error(`Invalid Method: ${method}`);
+
+    // 3. Cache Validation Logic
+    if (cache.status === 'HEALTHY' && !cache.models.includes(model)) {
+        throw new Error(`Model ${model} not found in supported models cache.`);
+    }
+
+    // Advisory: If DEGRADED, we allow requests but log the state elsewhere
+    return true;
+}
+
+export function logCacheStatus(cache: ModelCache) {
+    console.log(JSON.stringify({
+        cacheStatus: cache.status,
+        cachedModelsCount: cache.models.length,
+        primaryModelAllowed: true // Per user requirement, it's ALWAYS allowed
+    }));
 }
 
 export function logGeminiRequest(model: string, version: string, source: string, status: string) {
