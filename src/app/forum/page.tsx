@@ -318,24 +318,24 @@ export default function ForumPage() {
 
     return (
         <div className="min-h-[calc(100vh-64px)] bg-[#f0f9ff] py-12">
-            <div className="container max-w-7xl px-4 md:px-8">
-                <div className="flex items-center justify-between mb-8">
+            <div className="w-full px-6 md:px-12 lg:px-20">
+                <div className="flex items-center justify-between mb-10">
                     <div>
-                        <h1 className="text-3xl font-bold text-primary">Discussion Forum</h1>
-                        <p className="text-muted-foreground">Ask questions and get help from mentors.</p>
+                        <h1 className="text-4xl font-extrabold text-primary tracking-tight">Discussion Forum</h1>
+                        <p className="text-lg text-muted-foreground">Get expert help and connect with the community.</p>
                     </div>
                     <button
                         onClick={() => setIsModalOpen(true)}
-                        className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-colors inline-flex items-center font-medium shadow-lg shadow-primary/20"
+                        className="bg-primary text-primary-foreground px-6 py-3 rounded-xl hover:bg-primary/90 transition-all active:scale-95 inline-flex items-center font-semibold shadow-xl shadow-primary/20"
                     >
-                        <MessageSquare className="mr-2 h-4 w-4" />
+                        <MessageSquare className="mr-2 h-5 w-5" />
                         Ask Question
                     </button>
                 </div>
 
                 <AnnouncementBlock />
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8">
                     {loading && <div className="col-span-full text-center py-10"><Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" /></div>}
 
                     {!loading && posts.length === 0 && (
