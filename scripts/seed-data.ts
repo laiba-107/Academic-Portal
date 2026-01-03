@@ -39,121 +39,402 @@ const universities = [
     {
         university: "National University of Sciences & Technology (NUST)",
         location: "Islamabad",
+        branchCampuses: [
+            "Islamabad (H-12 – Main Campus)",
+            "Rawalpindi (Military College of Signals, EME, CAE)",
+            "Karachi (PNEC)"
+        ],
         type: "Public Research",
         website: "https://www.nust.edu.pk/admissions/undergraduate/",
-        requirements: "Minimum 60–70% in FSc/Equivalent + NUST Entry Test (NET).",
-        fees: "~ $2,500–$3,200 per semester for international / ~PKR 120,000 for locals.",
-        departments: "Engineering, IT, Business, Natural Sciences, Architecture, Law.",
+        requirements: "Minimum 60–75% in FSc/Equivalent + NUST Entry Test (NET).",
+        fees: "~PKR 120,000–150,000 per semester (local students).",
+        famousDepartments: [
+            "Engineering (SEECS, SMME)",
+            "Computer Science & AI",
+            "Business (NBS)",
+            "Architecture & Industrial Design (SADA)"
+        ],
         image: "/images/nust.png",
         country: "Pakistan",
-        program: "Engineering & Tech",
+        program: "Engineering, Computing & Sciences",
         deadline: "July 2025"
     },
+
     {
         university: "Lahore University of Management Sciences (LUMS)",
         location: "Lahore",
+        branchCampuses: ["Lahore (DHA – Single Campus University)"],
         type: "Private",
         website: "https://admissions.lums.edu.pk/",
-        requirements: "High merit in FSc/A-Levels + SAT/LUMS Entry Test + Interview.",
-        fees: "~PKR 23,760 per credit hour (Approx. $1,500+ per semester).",
-        departments: "Business, Economics, Computer Science, Law, Social Sciences.",
-        image: "/images/lums.png",
+        requirements: "Excellent academic record in FSc/A-Levels + SAT/LUMS Test + Interview.",
+        fees: "~PKR 1.6–1.9 million per semester (program dependent).",
+        famousDepartments: [
+            "SDSB (Business & Management)",
+            "Computer Science",
+            "Economics",
+            "Law (Shaikh Ahmad Hassan School of Law)"
+        ],
+        image: "/images/lums.jpg",
         country: "Pakistan",
-        program: "Management & CS",
+        program: "Management, Economics & CS",
         deadline: "April 2025"
     },
+
     {
         university: "Aga Khan University (AKU)",
         location: "Karachi",
+        branchCampuses: [
+            "Karachi (Main)",
+            "Teaching Hospitals across Pakistan"
+        ],
         type: "Private",
         website: "https://www.aku.edu/admissions/Pages/home.aspx",
-        requirements: "Top-tier merit + AKU Entry Test (very competitive).",
-        fees: "Medical: ~10.32L per semester.",
-        departments: "MBBS, Nursing, Public Health, Allied Health.",
+        requirements: "Exceptional academic merit + AKU Entry Test + Interview.",
+        fees: "MBBS: ~PKR 1,000,000+ per semester.",
+        famousDepartments: [
+            "Medicine (MBBS)",
+            "Nursing & Midwifery",
+            "Public Health",
+            "Biological & Health Sciences"
+        ],
         image: "/images/aku.png",
         country: "Pakistan",
-        program: "Medicine",
+        program: "Medicine & Health Sciences",
         deadline: "May 2025"
     },
+
     {
         university: "Institute of Business Administration (IBA)",
         location: "Karachi",
+        branchCampuses: [
+            "Main Campus",
+            "City Campus"
+        ],
         type: "Public Sector",
         website: "https://admissions.iba.edu.pk/",
-        requirements: "Competitive Entry Test + Interview.",
-        fees: "~PKR 350,000 - 450,000 per year.",
-        departments: "Business Administration, Economics, Finance, Social Sciences.",
+        requirements: "Highly competitive IBA Entry Test + Interview.",
+        fees: "~PKR 175,000–225,000 per semester.",
+        famousDepartments: [
+            "Business Administration",
+            "Accounting & Finance",
+            "Economics",
+            "Social Sciences"
+        ],
         image: "/images/iba.jpg",
         country: "Pakistan",
-        program: "Business & Social Sciences",
+        program: "Business & Economics",
         deadline: "June 2025"
     },
+
     {
         university: "COMSATS University Islamabad (CUI)",
         location: "Islamabad",
+        branchCampuses: [
+            "Islamabad (Main)",
+            "Lahore",
+            "Wah",
+            "Abbottabad",
+            "Vehari",
+            "Sahiwal",
+            "Attock"
+        ],
         type: "Public",
         website: "https://admissions.comsats.edu.pk/",
-        requirements: "Minimum 60% in Intermediate + NTS NAT/CUI Test.",
-        fees: "~PKR 114,000 - 118,000 per semester.",
-        departments: "Computer Science, Software Engineering, Electrical Engineering, Business.",
+        requirements: "Minimum 60% in Intermediate + NTS NAT / CUI Test.",
+        fees: "~PKR 114,000–118,000 per semester.",
+        famousDepartments: [
+            "Computer Science",
+            "Software Engineering",
+            "Electrical Engineering",
+            "Business Administration"
+        ],
         image: "/images/comsats.jpg",
         country: "Pakistan",
         program: "IT & Engineering",
-        deadline: "Jan 2026 (Spring)"
+        deadline: "January 2026 (Spring)"
     },
+
     {
         university: "Air University (AU)",
         location: "Islamabad",
+        branchCampuses: [
+            "Islamabad (Main)",
+            "Multan",
+            "Kamra",
+            "Kharian",
+            "Karachi"
+        ],
         type: "Public",
         website: "https://www.au.edu.pk/Pages/Admission/admission_schedule.aspx",
-        requirements: "Minimum 50-60% in HSSC + AU-CBT Entry Test.",
-        fees: "CS/IT: ~PKR 127k-153k | Business: ~PKR 108k per semester.",
-        departments: "Computing & AI, Aerospace, Business, Law, Social Sciences.",
+        requirements: "Minimum 50–60% in HSSC + AU-CBT Entry Test.",
+        fees: "CS/IT: ~PKR 130k–155k | Business: ~PKR 108k per semester.",
+        famousDepartments: [
+            "Computer Science & AI",
+            "Cyber Security",
+            "Aerospace Engineering",
+            "Business Administration"
+        ],
         image: "/images/air_uni.png",
         country: "Pakistan",
-        program: "Computing & AI",
+        program: "Computing, AI & Engineering",
         deadline: "July 2025"
     },
+
     {
         university: "University of the Punjab",
         location: "Lahore",
+        branchCampuses: [
+            "Allama Iqbal Campus",
+            "Quaid-e-Azam Campus",
+            "Gujranwala Campus",
+            "Jhelum Campus"
+        ],
         type: "Public",
         website: "http://admissions.pu.edu.pk/",
-        requirements: "Merit based on prior qualifications + Entry Test for specific programs.",
-        fees: "Relatively low (Public sector rates).",
-        departments: "Arts, Sciences, Business, Law, Pharmacy, Engineering.",
+        requirements: "Merit-based; Entry Test for selected programs.",
+        fees: "Very low public-sector fee structure.",
+        famousDepartments: [
+            "Law",
+            "Pharmacy",
+            "Economics",
+            "Arts & Humanities"
+        ],
         image: "/images/punjab_uni.jpg",
         country: "Pakistan",
         program: "General & Professional",
         deadline: "August 2025"
     },
+
     {
-        university: "UET Lahore",
+        university: "University of Engineering & Technology (UET Lahore)",
         location: "Lahore",
+        branchCampuses: [
+            "Lahore (Main)",
+            "Kala Shah Kaku",
+            "Faisalabad",
+            "Narowal"
+        ],
         type: "Public",
         website: "https://admission.uet.edu.pk/",
-        requirements: "FSc Pre-Engineering + ECAT Entry Test.",
-        fees: "Regular: ~PKR 70k-88k | Self-Finance: ~PKR 150k+.",
-        departments: "Electrical, Mechanical, Civil, Chemical, Computer Engineering.",
+        requirements: "FSc Pre-Engineering + ECAT.",
+        fees: "Regular: ~PKR 70k–90k | Self-Finance higher.",
+        famousDepartments: [
+            "Electrical Engineering",
+            "Mechanical Engineering",
+            "Civil Engineering",
+            "Computer Engineering"
+        ],
         image: "/images/uet_lahore.png",
         country: "Pakistan",
         program: "Engineering",
         deadline: "August 2025"
     },
+
     {
-        university: "Sindh Agriculture University",
-        location: "Tando Jam",
-        type: "Public",
-        website: "https://sau.edu.pk/admissions/",
-        requirements: "Merit based on HSSC + Entrance Test.",
-        fees: "Standard Public Sector fees.",
-        departments: "Agriculture, Food Science, Veterinary, Engineering.",
-        image: "/images/sindh_ag_uni.jpg",
+        university: "Habib University",
+        location: "Karachi",
+        branchCampuses: ["Karachi (Single Campus)"],
+        type: "Private",
+        website: "https://habib.edu.pk/",
+        requirements: "Strong academics + HU Admission Test / SAT.",
+        fees: "~PKR 650,000+ per semester (financial aid widely available).",
+        famousDepartments: [
+            "Computer Science",
+            "Social Development & Policy",
+            "Liberal Arts",
+            "Communication & Design"
+        ],
+        image: "/images/habib.jpg",
         country: "Pakistan",
-        program: "Agriculture",
-        deadline: "September 2025"
+        program: "Liberal Arts & CS",
+        deadline: "March 2025"
+    },
+
+    {
+        university: "Quaid-e-Azam University (QAU)",
+        location: "Islamabad",
+        branchCampuses: ["Islamabad (Main Campus)"],
+        type: "Public Research",
+        website: "https://www.qau.edu.pk/",
+        requirements: "Merit-based (high competition).",
+        fees: "Very low public-sector fees.",
+        famousDepartments: [
+            "Physics",
+            "Chemistry",
+            "Biological Sciences",
+            "International Relations"
+        ],
+        image: "/images/qau.jpg",
+        country: "Pakistan",
+        program: "Sciences & Research",
+        deadline: "July 2025"
+    },
+
+    {
+        university: "Pakistan Institute of Engineering and Applied Sciences (PIEAS)",
+        location: "Islamabad",
+        branchCampuses: ["Islamabad (Single Campus)"],
+        type: "Public Research",
+        website: "http://www.pieas.edu.pk/",
+        requirements: "Top merit + PIEAS Entry Test.",
+        fees: "Highly subsidized; scholarships common.",
+        famousDepartments: [
+            "Nuclear Engineering",
+            "Mechanical Engineering",
+            "Computer & Information Sciences"
+        ],
+        image: "/images/pieas.jpg",
+        country: "Pakistan",
+        program: "Engineering & Applied Sciences",
+        deadline: "June 2025"
+    },
+
+    {
+        university: "FAST – National University of Computer & Emerging Sciences",
+        location: "Islamabad",
+        branchCampuses: [
+            "Islamabad",
+            "Lahore",
+            "Karachi",
+            "Peshawar",
+            "Chiniot-Faisalabad"
+        ],
+        type: "Private",
+        website: "https://isb.nu.edu.pk/",
+        requirements: "FAST Entry Test / SAT.",
+        fees: "~PKR 150,000–180,000 per semester.",
+        famousDepartments: [
+            "Computer Science",
+            "Software Engineering",
+            "Artificial Intelligence"
+        ],
+        image: "/images/fast.jpg",
+        country: "Pakistan",
+        program: "Computer Science",
+        deadline: "July 2025"
+    },
+
+    {
+        university: "Ghulam Ishaq Khan Institute (GIKI)",
+        location: "Topi, Khyber Pakhtunkhwa",
+        branchCampuses: ["Topi (Main Campus)"],
+        type: "Private Research",
+        website: "https://giki.edu.pk/",
+        requirements: "Competitive merit + GIKI Entry Test (for engineering / CS).",
+        fees: "~PKR 400,000+ per academic year (varies by program).",
+        famousDepartments: [
+            "Electrical Engineering",
+            "Computer Science & Engineering",
+            "Mechanical Engineering",
+            "Materials Science & Engineering",
+            "Management Sciences"
+        ],
+        image: "/images/giki.png",
+        country: "Pakistan",
+        program: "Engineering & Tech Sciences",
+        deadline: "June–July 2025"
+    },
+    {
+        university: "NED University of Engineering and Technology",
+        location: "Karachi",
+        branchCampuses: ["Main Campus, Karachi"],
+        type: "Public Engineering",
+        website: "https://www.neduet.edu.pk/",
+        requirements: "Merit-based + Pre-Admission Entry Test for engineering; HSC (Pre-Eng) typical.",
+        fees: "~PKR 59,000–64,000 per semester (core tuition) + other charges. ",
+        famousDepartments: [
+            "Civil Engineering",
+            "Electrical Engineering",
+            "Computer Science",
+            "Mechanical Engineering",
+            "Software Engineering"
+        ],
+        image: "/images/ned.jpg",
+        country: "Pakistan",
+        program: "Engineering & Tech",
+        deadline: "May–June 2025"
+    },
+    {
+        university: "National University of Modern Languages (NUML)",
+        location: "Islamabad",
+        branchCampuses: [
+            "Islamabad (Main)",
+            "Lahore",
+            "Karachi",
+            "Quetta",
+            "Faisalabad",
+            "Multan",
+            "Hyderabad",
+            "Peshawar",
+            "Rawalpindi",
+            "Mirpur (AJK)"
+        ],
+        type: "Public",
+        website: "https://www.numl.edu.pk/",
+        requirements: "Merit-based admission; varies by program & campus.",
+        fees: "Varies by campus & discipline (official fee structure available on site).",
+        famousDepartments: [
+            "Languages & Linguistics",
+            "Management Sciences",
+            "Computer Science & Software Engineering",
+            "Media & Communication Studies",
+            "Psychology"
+        ],
+        image: "/images/numl.jpg",
+        country: "Pakistan",
+        program: "Languages, Social Sciences & Tech",
+        deadline: "Varies by intake (Fall & Spring 2025–2026)"
+    },
+    {
+        university: "Institute of Business Management (IoBM)",
+        location: "Karachi",
+        branchCampuses: ["Main Campus, Korangi Creek Road"],
+        type: "Private",
+        website: "https://iobm.edu.pk/",
+        requirements: "Merit-based + IoBM admissions test/interview for some programs.",
+        fees: "~PKR 140,000–180,000 per semester (depending on program).",
+        famousDepartments: [
+            "Business Management",
+            "Computer Science & Information Systems",
+            "Economics & Social Development",
+            "Engineering Sciences"
+        ],
+        image: "/images/iobm.jpg",
+        country: "Pakistan",
+        program: "Business, Tech & Social Sciences",
+        deadline: "December 2025 (Spring 2026 merit list)",
+    },
+    {
+        university: "University of Lahore (UOL)",
+        location: "Lahore",
+        branchCampuses: [
+            "Main Campus, Lahore",
+            "Defence Road Campus",
+            "City Campus",
+            "Islamabad Campus",
+            "Sargodha Campus",
+            "Pakpattan Campus",
+            "Gujrat Campus"
+        ],
+        type: "Private",
+        website: "https://uol.edu.pk/",
+        requirements: "Merit-based + program-specific entry requirements.",
+        fees: "~PKR 85,000–150,000 per semester for many programs (estimate).",
+        famousDepartments: [
+            "Computer Science",
+            "Electrical & Civil Engineering",
+            "Medicine & Health Sciences",
+            "Business & Management",
+            "Pharmacy"
+        ],
+        image: "/images/uol.jpg",
+        country: "Pakistan",
+        program: "Multi-disciplinary (Engineering, Medicine, Business, Sciences)",
+        deadline: "August 2025"
     }
+
 ];
+
 
 const scholarships = [
     {
@@ -164,6 +445,33 @@ const scholarships = [
         description: "A prestigious scholarship established to support meritorious students from disadvantaged backgrounds in their undergraduate studies.",
         link: "https://www.google.com/search?q=Jenabai+Hussainali+Shariff+and+Family+Scholarship",
         deadline: "August 2025"
+    },
+    {
+        name: "National Outreach Programme (NOP) – LUMS",
+        category: "Undergraduate Scholarship",
+        amount: "100% Tuition Fee + Living Allowance + Accommodation",
+        eligibility: "Pakistani students from financially disadvantaged backgrounds with strong academic performance; Intermediate/A-Level students meeting LUMS merit criteria.",
+        description: "The National Outreach Programme (NOP) by LUMS aims to provide fully funded undergraduate education to talented students from underserved communities across Pakistan. It includes academic preparation, mentorship, and complete financial support for selected students.",
+        link: "https://nop.lums.edu.pk/",
+        deadline: "December–January (varies annually)"
+    },
+    {
+        name: "National Talent Hunt Program (NTHP) – IBA Karachi",
+        category: "Undergraduate Scholarship",
+        amount: "Up to 100% Tuition Fee + Stipend (Need-Based)",
+        eligibility: "Students from underprivileged backgrounds across Pakistan with strong academic potential; must qualify IBA admission requirements after preparatory program.",
+        description: "The National Talent Hunt Program (NTHP) is a flagship initiative of IBA Karachi designed to identify and support bright students from low-income families. The program provides preparatory education, mentorship, and financial assistance leading to undergraduate admission at IBA.",
+        link: "https://www.iba.edu.pk/nthp",
+        deadline: "January–February (varies annually)"
+    },
+    {
+        name: "Habib University Talent Outreach Promotion & Support (HuTOPS)",
+        category: "Undergraduate Scholarship",
+        amount: "Up to 100% Tuition Fee (Need-Based Financial Aid)",
+        eligibility: "Pakistani students from financially disadvantaged backgrounds with strong academic potential; must apply and qualify for Habib University undergraduate programs.",
+        description: "HuTOPS is Habib University’s outreach and financial aid initiative aimed at increasing access to liberal arts education for talented students from underrepresented communities. It provides extensive need-based financial support along with academic mentoring.",
+        link: "https://habib.edu.pk/admissions/financial-aid/",
+        deadline: "January–March (varies annually)"
     },
     {
         name: "Ehsaas Undergraduate Scholarship (BISP)",
