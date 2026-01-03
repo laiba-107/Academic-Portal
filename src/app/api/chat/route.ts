@@ -26,8 +26,8 @@ ${scholarshipsSnap.docs.map((s: any) => `- ${s.data().name} (${s.data().category
 
         // 2. Direct REST API Call (Avoids library 404s on Render)
         const apiKey = process.env.GEMINI_API_KEY.trim();
-        // Using v1beta for better model support
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+        // Using v1 for stable model support
+        const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
         const systemPrompt = `You are the Academic Portal Assistant.
 1. Use the AUTHORITATIVE DATA for specific questions about universities in our database.

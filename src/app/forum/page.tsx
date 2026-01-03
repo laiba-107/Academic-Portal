@@ -99,20 +99,25 @@ function PostItem({ post, user, userRole }: { post: Post, user: User | null, use
             layout // Enable layout animation for smooth expanding
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="border border-border rounded-xl bg-card shadow-sm overflow-hidden"
+            className="border-2 border-primary/10 rounded-2xl bg-white shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
         >
-            <div className="p-6">
-                <div className="flex justify-between items-start mb-4">
+            <div className="p-8">
+                <div className="flex justify-between items-start mb-5">
                     <div>
-                        <h3 className="text-xl font-semibold mb-1">{post.title}</h3>
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${post.authorRole === 'mentor' ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-700'}`}>
-                                {post.authorRole === 'mentor' ? 'Mentor' : 'Student'}
+                        <div className="flex items-center gap-3 mb-3">
+                            <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                                Question
                             </span>
-                            <span>{post.authorName}</span>
-                            <span>•</span>
-                            <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${post.authorRole === 'mentor' ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-700'}`}>
+                                    {post.authorRole === 'mentor' ? 'Mentor' : 'Student'}
+                                </span>
+                                <span className="font-medium text-foreground">{post.authorName}</span>
+                                <span>•</span>
+                                <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+                            </div>
                         </div>
+                        <h3 className="text-2xl font-bold text-foreground leading-tight">{post.title}</h3>
                     </div>
                     {userRole === "admin" && (
                         <button
@@ -124,7 +129,8 @@ function PostItem({ post, user, userRole }: { post: Post, user: User | null, use
                         </button>
                     )}
                 </div>
-                <p className="text-foreground/80 leading-relaxed whitespace-pre-wrap">{post.content}</p>
+                <p className="text-lg text-foreground/80 leading-relaxed whitespace-pre-wrap">{post.content}</p>
+
 
                 <div className="mt-4 pt-4 border-t border-border flex items-center gap-4">
                     <button
