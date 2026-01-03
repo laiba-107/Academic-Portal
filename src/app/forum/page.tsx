@@ -318,7 +318,7 @@ export default function ForumPage() {
 
     return (
         <div className="min-h-[calc(100vh-64px)] bg-[#f0f9ff] py-12">
-            <div className="container max-w-4xl px-4 md:px-0">
+            <div className="container max-w-7xl px-4 md:px-8">
                 <div className="flex items-center justify-between mb-8">
                     <div>
                         <h1 className="text-3xl font-bold text-primary">Discussion Forum</h1>
@@ -335,11 +335,11 @@ export default function ForumPage() {
 
                 <AnnouncementBlock />
 
-                <div className="space-y-6">
-                    {loading && <div className="text-center py-10"><Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" /></div>}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {loading && <div className="col-span-full text-center py-10"><Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" /></div>}
 
                     {!loading && posts.length === 0 && (
-                        <div className="text-center py-12 border border-dashed rounded-xl bg-white/50">
+                        <div className="col-span-full text-center py-12 border border-dashed rounded-xl bg-white/50">
                             <p className="text-muted-foreground">No discussions yet. Be the first to ask!</p>
                         </div>
                     )}
