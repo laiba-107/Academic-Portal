@@ -214,6 +214,46 @@ function PostItem({ post, user, userRole }: { post: Post, user: User | null, use
     );
 }
 
+function AnnouncementBlock() {
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-10 overflow-hidden rounded-3xl bg-gradient-to-r from-primary to-indigo-600 p-1 shadow-2xl"
+        >
+            <div className="flex flex-col md:flex-row items-center gap-6 bg-white/5 backdrop-blur-md p-8 md:p-10 rounded-[22px] text-white">
+                <div className="flex-shrink-0 bg-white/20 p-4 rounded-2xl">
+                    <motion.div
+                        animate={{ rotate: [0, 10, -10, 0] }}
+                        transition={{ repeat: Infinity, duration: 4 }}
+                    >
+                        <MessageSquare className="h-10 w-10 text-white" />
+                    </motion.div>
+                </div>
+                <div className="flex-1 text-center md:text-left">
+                    <div className="flex items-center justify-center md:justify-start gap-2 mb-3">
+                        <span className="bg-amber-400 text-amber-950 px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest shadow-sm">
+                            Upcoming Session
+                        </span>
+                    </div>
+                    <h2 className="text-2xl md:text-3xl font-extrabold mb-3 leading-tight">University Admissions Masterclass 2026</h2>
+                    <p className="text-indigo-50/90 text-lg leading-relaxed max-w-2xl">
+                        Join our expert mentors for a deep dive into top-tier university applications. Get your portfolio reviewed and learn insider tips for successful admissions.
+                    </p>
+                </div>
+                <div className="flex-shrink-0 w-full md:w-auto">
+                    <div className="bg-white/10 border border-white/20 p-5 rounded-2xl backdrop-blur-sm">
+                        <div className="text-center">
+                            <p className="text-indigo-100 text-sm font-semibold uppercase tracking-tighter mb-1">Date & Time</p>
+                            <p className="text-xl font-bold italic">Jan 15th • 7:00 PM</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </motion.div>
+    );
+}
+
 export default function ForumPage() {
     const [user, setUser] = useState<User | null>(null);
     const [userRole, setUserRole] = useState("user");
@@ -292,6 +332,8 @@ export default function ForumPage() {
                         Ask Question
                     </button>
                 </div>
+
+                <AnnouncementBlock />
 
                 <div className="space-y-6">
                     {loading && <div className="text-center py-10"><Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" /></div>}
