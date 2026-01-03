@@ -39,7 +39,6 @@ export function Navbar() {
         { href: "/admissions", label: "Admissions" },
         { href: "/scholarships", label: "Scholarships" },
         { href: "/forum", label: "Forum" },
-        { href: "/chatbot", label: "AI Chatbot" },
     ];
 
     return (
