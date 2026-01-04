@@ -2,8 +2,8 @@ import * as admin from "firebase-admin";
 import * as fs from "fs";
 import * as path from "path";
 
-// Load .env.local manually
-const envPath = path.resolve(process.cwd(), ".env.local");
+// Load environment variables manually
+const envPath = path.resolve(process.cwd(), "Academic-Portal.env");
 if (fs.existsSync(envPath)) {
     const envFile = fs.readFileSync(envPath, "utf-8");
     envFile.split(/\r?\n/).forEach((line) => {
@@ -20,16 +20,20 @@ if (fs.existsSync(envPath)) {
 }
 
 if (!admin.apps.length) {
-    const serviceAccountPath = path.resolve(process.cwd(), "service-account.json");
-    if (fs.existsSync(serviceAccountPath)) {
-        const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, "utf-8"));
-        console.log("Service Account Project ID:", serviceAccount.project_id);
+    const projectId = process.env.FIREBASE_PROJECT_ID;
+    const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+    const privateKey = process.env.FIREBASE_PRIVATE_KEY;
+
+    if (projectId && clientEmail && privateKey) {
         admin.initializeApp({
-            credential: admin.credential.cert(serviceAccount),
+            credential: admin.credential.cert({
+                projectId,
+                clientEmail,
+                privateKey: privateKey.replace(/\\n/g, "\n"),
+            }),
         });
-        console.log("Initialized with service-account.json");
     } else {
-        console.error("Missing service-account.json");
+        console.error("Missing Firebase credentials. Ensure they are in your environment or Academic-Portal.env");
         process.exit(1);
     }
 }
