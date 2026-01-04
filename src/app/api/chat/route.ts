@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { adminDb } from "@/lib/firebase-admin";
 import { STRICT_CONFIG, validateRequest, logGeminiRequest, getModelCache, logCacheStatus } from "@/lib/gemini";
+import { scrapeUniversityPage, extractRelevantSections } from "@/lib/scraper";
 
 export async function POST(req: Request) {
     const timestamp = new Date().toISOString();
@@ -16,11 +17,11 @@ export async function POST(req: Request) {
 
         const apiKey = process.env.GEMINI_API_KEY.trim();
 
-        // 1. Model Discovery & Caching (Advisory/Discovery Phase)
+        // 1. Model Discovery & Caching
         const cache = await getModelCache(apiKey);
         logCacheStatus(cache);
 
-        // 2. Mandatory Pre-Request Validation (Primary model is NEVER blocked)
+        // 2. Mandatory Pre-Request Validation
         try {
             validateRequest(STRICT_CONFIG.model, STRICT_CONFIG.apiVersion, STRICT_CONFIG.method, cache);
         } catch (vError: any) {
@@ -28,58 +29,133 @@ export async function POST(req: Request) {
             return NextResponse.json({ reply: "Invalid API Configuration. Request blocked." });
         }
 
-        // 3. Fetch Local context (The "Scraping" equivalent for this route)
+        // 3. Fetch Local Context from Firestore
         const [admissionsSnap, scholarshipsSnap] = await Promise.all([
             adminDb.collection("admissions").get(),
             adminDb.collection("scholarships").get()
         ]);
 
-        const context = `
+        const universities = admissionsSnap.docs.map((doc: any) => doc.data());
+        const scholarships = scholarshipsSnap.docs.map((doc: any) => doc.data());
+
+        // Build local context
+        let localContext = `
 AUTHORITATIVE PORTAL DATA:
-UNIVERSITIES:
-${admissionsSnap.docs.map((u: any) => `- ${u.data().university} in ${u.data().location}.`).join("\n")}
-SCHOLARSHIPS:
-${scholarshipsSnap.docs.map((s: any) => `- ${s.data().name}`).join("\n")}
+
+UNIVERSITIES (${universities.length} total):
+${universities.map((u: any) => `
+- ${u.university} (${u.location})
+  Type: ${u.type}
+  Website: ${u.website}
+  Fees: ${u.fees}
+  Requirements: ${u.requirements}
+  Famous Departments: ${u.famousDepartments?.join(', ')}
+  Deadline: ${u.deadline}
+`).join('\n')}
+
+SCHOLARSHIPS (${scholarships.length} total):
+${scholarships.map((s: any) => `
+- ${s.name}
+  Category: ${s.category}
+  Amount: ${s.amount}
+  Eligibility: ${s.eligibility}
+  Deadline: ${s.deadline}
+  Link: ${s.link}
+`).join('\n')}
 `;
 
-        // 4. Web Scraping Guardrails (Abort if empty or malformed)
-        // Note: Even if Firestore is empty, we have system prompt, but if message is missing, abort.
+        // 4. Intelligent Query Routing - Determine if web scraping is needed
+        const needsWebScraping = detectWebScrapingNeed(message, universities);
+        let scrapedContext = "";
+        let scrapedSources: string[] = [];
+
+        if (needsWebScraping.needed) {
+            console.log(`[Chat] Web scraping triggered for: ${needsWebScraping.urls.join(', ')}`);
+
+            // Attempt to scrape relevant URLs
+            for (const url of needsWebScraping.urls.slice(0, 2)) { // Limit to 2 URLs to avoid slowness
+                const scraped = await scrapeUniversityPage(url);
+                if (scraped) {
+                    const relevantContent = extractRelevantSections(scraped, message);
+                    scrapedContext += `\n\nWEB SCRAPED DATA from ${scraped.title} (${scraped.url}):\n${relevantContent}\n`;
+                    scrapedSources.push(scraped.url);
+                }
+            }
+        }
+
+        // 5. Validate input
         if (!message || message.trim().length === 0) {
             scrapeStatus = "failed_empty_input";
             logGeminiRequest(STRICT_CONFIG.model, STRICT_CONFIG.apiVersion, "direct", "ABORTED_EMPTY_INPUT");
             return NextResponse.json({ reply: "Please provide a valid question." });
         }
 
-        const systemPrompt = `You are the Academic Portal Assistant.
-1. Use the AUTHORITATIVE DATA...`;
+        // 6. Build Enhanced System Prompt
+        const systemPrompt = `You are the Academic Portal Assistant - an intelligent AI helper for Pakistani students seeking university admissions and scholarship information.
+
+YOUR CAPABILITIES:
+1. Access to authoritative database of ${universities.length} universities and ${scholarships.length} scholarships
+2. Real-time web scraping of university websites for latest information
+3. General knowledge about Pakistani education system, entrance tests, and application processes
+
+RESPONSE GUIDELINES:
+- Always prioritize AUTHORITATIVE PORTAL DATA (from our database) as it's verified
+- Use WEB SCRAPED DATA when available for the most current information
+- For general questions (study tips, test prep, career advice), use your knowledge
+- Be specific, helpful, and cite sources when using scraped data
+- If you don't have enough information, acknowledge it honestly
+- Format responses clearly with bullet points or numbered lists when appropriate
+- Include relevant deadlines, fees, and requirements when discussing universities
+
+IMPORTANT:
+- Always mention if information is from our database vs. scraped from university websites
+- If scraped data is used, mention the source URL
+- For scholarship questions, provide direct application links when available
+- Be encouraging and supportive - students are often stressed about admissions`;
+
+        // 7. Prepare AI Request
+        const fullContext = `${systemPrompt}
+
+${localContext}
+${scrapedContext}
+
+${scrapedSources.length > 0 ? `\nSOURCES CONSULTED: ${scrapedSources.join(', ')}` : ''}
+
+USER QUESTION: ${message}`;
 
         const apiRequest = {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                contents: [{ role: "user", parts: [{ text: `${systemPrompt}\n\nCONTEXT:\n${context}\n\nUSER QUESTION: ${message}` }] }],
-                generationConfig: { temperature: 0.7, maxOutputTokens: 1000 }
+                contents: [{
+                    role: "user",
+                    parts: [{ text: fullContext }]
+                }],
+                generationConfig: {
+                    temperature: 0.7,
+                    maxOutputTokens: 2000, // Increased for more detailed responses
+                    topP: 0.9,
+                    topK: 40
+                }
             })
         };
 
         const url = `https://generativelanguage.googleapis.com/${STRICT_CONFIG.apiVersion}/${STRICT_CONFIG.model}:${STRICT_CONFIG.method}?key=${apiKey}`;
 
-        // Mandatory Logging before request
+        // 8. Make AI Request
         logGeminiRequest(STRICT_CONFIG.model, STRICT_CONFIG.apiVersion, "direct", "PENDING");
 
         let response = await fetch(url, apiRequest);
 
-        // 5. Retry Rules (Retry once on the same model/version)
+        // 9. Retry Logic
         if (!response.ok && response.status !== 404) {
             console.warn(`Gemini Request failed (${response.status}). Retrying once...`);
             response = await fetch(url, apiRequest);
         }
 
-        // Handle 404 specifically as per instructions
         if (response.status === 404) {
             console.error("404 Error: Forcing model and refreshing cache...");
-            await getModelCache(apiKey); // Refresh cache
-            // Force retry once same config
+            await getModelCache(apiKey);
             response = await fetch(url, apiRequest);
         }
 
@@ -98,6 +174,52 @@ ${scholarshipsSnap.docs.map((s: any) => `- ${s.data().name}`).join("\n")}
     } catch (error: any) {
         console.error("Critical Chat Error:", error);
         logGeminiRequest(STRICT_CONFIG.model, STRICT_CONFIG.apiVersion, "direct", "CRITICAL_FAILURE");
-        return NextResponse.json({ reply: "Internal Server Error." });
+        return NextResponse.json({ reply: "Internal Server Error. Please try again." });
     }
+}
+
+/**
+ * Determines if a query needs web scraping and returns relevant URLs
+ */
+function detectWebScrapingNeed(query: string, universities: any[]): { needed: boolean; urls: string[] } {
+    const queryLower = query.toLowerCase();
+
+    // Keywords that suggest need for current/detailed information
+    const scrapingKeywords = [
+        'latest', 'current', 'updated', 'recent', 'new',
+        'detailed', 'specific', 'exact', 'precise',
+        'admission process', 'how to apply', 'application procedure',
+        'entry test', 'test pattern', 'syllabus'
+    ];
+
+    const needsScraping = scrapingKeywords.some(keyword => queryLower.includes(keyword));
+
+    if (!needsScraping) {
+        return { needed: false, urls: [] };
+    }
+
+    // Find relevant university URLs
+    const relevantUrls: string[] = [];
+
+    for (const uni of universities) {
+        const uniName = uni.university.toLowerCase();
+        const uniShortNames = [
+            'nust', 'lums', 'aku', 'iba', 'comsats', 'fast',
+            'giki', 'ned', 'numl', 'uet', 'habib', 'qau', 'pieas'
+        ];
+
+        // Check if query mentions this university
+        const mentioned = uniShortNames.some(short =>
+            queryLower.includes(short) && uniName.includes(short)
+        ) || queryLower.includes(uniName);
+
+        if (mentioned && uni.website) {
+            relevantUrls.push(uni.website);
+        }
+    }
+
+    return {
+        needed: relevantUrls.length > 0,
+        urls: relevantUrls
+    };
 }

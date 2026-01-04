@@ -334,7 +334,7 @@ const universities = [
             "Materials Science & Engineering",
             "Management Sciences"
         ],
-        image: "/images/giki.png",
+        image: "/images/giki.jpg",
         country: "Pakistan",
         program: "Engineering & Tech Sciences",
         deadline: "June–July 2025"
