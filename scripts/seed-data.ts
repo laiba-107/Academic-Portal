@@ -460,7 +460,7 @@ const universities = [
             "Computer Science",
             "Islamic Studies"
         ],
-        image: "/images/karachi_uni.jpg",
+        image: "/images/ku.jpg",
         country: "Pakistan",
         program: "General & Professional (Arts, Sciences, Business, Law)",
         deadline: "Varies by program (typically July-August 2025)"
@@ -487,7 +487,7 @@ const universities = [
             "Media Sciences (Mass Communication)",
             "Executive Programs"
         ],
-        image: "/images/szabist.jpg",
+        image: "/images/zabist.jpg",
         country: "Pakistan",
         program: "Business, IT, Social Sciences & Media",
         deadline: "Spring 2026 (Check admission portal)"

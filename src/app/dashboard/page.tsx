@@ -1,11 +1,10 @@
 "use client";
 
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth, db } from "@/lib/firebase"; // Ensure db is exported from here
+import { auth } from "@/lib/firebase"; // db removed as it was unused
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { collection, query, where, getDocs } from "firebase/firestore";
-import { Loader2, User, Mail, Shield, GraduationCap, MessageSquare, ExternalLink, Sparkles } from "lucide-react";
+import { Loader2, User, Mail, Shield, MessageSquare, ExternalLink, Sparkles } from "lucide-react";
 
 export default function DashboardPage() {
     const [user, loading] = useAuthState(auth);
