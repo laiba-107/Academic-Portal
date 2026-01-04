@@ -6,29 +6,30 @@ import * as path from "path";
 const envPath = path.resolve(process.cwd(), ".env.local");
 if (fs.existsSync(envPath)) {
     const envFile = fs.readFileSync(envPath, "utf-8");
-    envFile.split("\n").forEach((line) => {
-        const [key, ...valueParts] = line.split("=");
-        if (key && valueParts.length > 0) {
-            process.env[key.trim()] = valueParts.join("=").trim().replace(/^"(.*)"$/, "$1");
+    envFile.split(/\r?\n/).forEach((line) => {
+        const match = line.match(/^\s*([\w.-]+)\s*=\s*(.*)$/);
+        if (match) {
+            let value = (match[2] || "").trim();
+            // Remove surround quotes
+            if (value.length > 0 && value.startsWith('"') && value.endsWith('"')) {
+                value = value.substring(1, value.length - 1);
+            }
+            process.env[match[1]] = value;
         }
     });
 }
 
 if (!admin.apps.length) {
-    const projectId = process.env.FIREBASE_PROJECT_ID;
-    const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
-    const privateKey = process.env.FIREBASE_PRIVATE_KEY;
-
-    if (projectId && clientEmail && privateKey) {
+    const serviceAccountPath = path.resolve(process.cwd(), "service-account.json");
+    if (fs.existsSync(serviceAccountPath)) {
+        const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, "utf-8"));
+        console.log("Service Account Project ID:", serviceAccount.project_id);
         admin.initializeApp({
-            credential: admin.credential.cert({
-                projectId,
-                clientEmail,
-                privateKey: privateKey.replace(/\\n/g, "\n"),
-            }),
+            credential: admin.credential.cert(serviceAccount),
         });
+        console.log("Initialized with service-account.json");
     } else {
-        console.error("Missing Firebase credentials in .env.local");
+        console.error("Missing service-account.json");
         process.exit(1);
     }
 }
@@ -529,30 +530,36 @@ async function clearCollection(collectionName: string) {
 }
 
 async function seed() {
-    console.log("Starting seed...");
+    try {
+        console.log("Starting full seed...");
 
-    // Clear existing for a fresh start
-    await clearCollection("admissions");
-    await clearCollection("scholarships");
+        // Clear existing for a fresh start
+        await clearCollection("admissions");
+        await clearCollection("scholarships");
 
-    for (const uni of universities) {
-        await db.collection("admissions").add({
-            ...uni,
-            createdAt: new Date().toISOString()
-        });
-        console.log(`Added university: ${uni.university}`);
+        for (const uni of universities) {
+            await db.collection("admissions").add({
+                ...uni,
+                createdAt: new Date().toISOString()
+            });
+            console.log(`Added university: ${uni.university}`);
+        }
+
+        for (const scholarship of scholarships) {
+            await db.collection("scholarships").add({
+                ...scholarship,
+                createdAt: new Date().toISOString()
+            });
+            console.log(`Added scholarship: ${scholarship.name}`);
+        }
+
+        console.log("Seed finished successfully!");
+        process.exit(0);
+    } catch (error) {
+        console.error("Seed failed!");
+        console.error(error);
+        process.exit(1);
     }
-
-    for (const scholarship of scholarships) {
-        await db.collection("scholarships").add({
-            ...scholarship,
-            createdAt: new Date().toISOString()
-        });
-        console.log(`Added scholarship: ${scholarship.name}`);
-    }
-
-    console.log("Seed finished successfully!");
-    process.exit(0);
 }
 
 seed();
