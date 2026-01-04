@@ -6,6 +6,8 @@ import { Send, Bot, User, Loader2, Sparkles, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { auth } from "@/lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface Message {
     id: string;
@@ -21,7 +23,7 @@ export default function ChatbotPage() {
         {
             id: "1",
             role: "bot",
-            content: "Hi there! I'm your Academic Assistant. I can help you find information about university admissions, scholarships, and more. What can I help you with today?",
+            content: "Hi there! I'm your **Academic Assistant**. I can help you find information about:\n\n• University admissions & requirements\n• Scholarships & financial aid\n• Application deadlines & fees\n• General study guidance\n\nWhat can I help you with today?",
             timestamp: new Date()
         }
     ]);
@@ -135,16 +137,24 @@ export default function ChatbotPage() {
                                 animate={{ opacity: 1, y: 0, scale: 1 }}
                                 className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                             >
-                                <div className={`flex items-start gap-4 max-w-[80%] ${msg.role === "user" ? "flex-row-reverse" : ""}`}>
+                                <div className={`flex items-start gap-4 max-w-[85%] ${msg.role === "user" ? "flex-row-reverse" : ""}`}>
                                     <div className={`h-10 w-10 shrink-0 rounded-xl flex items-center justify-center ${msg.role === "user" ? "bg-slate-900 text-white" : "bg-primary text-white shadow-lg shadow-primary/20"
                                         }`}>
                                         {msg.role === "user" ? <User className="h-5 w-5" /> : <Sparkles className="h-5 w-5" />}
                                     </div>
-                                    <div className={`p-6 rounded-[2rem] text-sm leading-relaxed font-medium shadow-sm border ${msg.role === "user"
+                                    <div className={`p-6 rounded-[2rem] shadow-sm border ${msg.role === "user"
                                         ? "bg-slate-900 text-white rounded-tr-none border-slate-800"
                                         : "bg-white text-slate-700 rounded-tl-none border-slate-100"
                                         }`}>
-                                        {msg.content}
+                                        {msg.role === "bot" ? (
+                                            <div className="prose prose-sm max-w-none prose-headings:font-bold prose-headings:text-slate-900 prose-p:text-slate-700 prose-p:leading-relaxed prose-strong:text-primary prose-strong:font-extrabold prose-ul:text-slate-700 prose-ol:text-slate-700 prose-li:marker:text-primary prose-a:text-primary prose-a:font-semibold hover:prose-a:underline">
+                                                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                                    {msg.content}
+                                                </ReactMarkdown>
+                                            </div>
+                                        ) : (
+                                            <p className="text-sm leading-relaxed font-medium">{msg.content}</p>
+                                        )}
                                     </div>
                                 </div>
                             </motion.div>
