@@ -438,6 +438,59 @@ const universities = [
         country: "Pakistan",
         program: "Multi-disciplinary (Engineering, Medicine, Business, Sciences)",
         deadline: "August 2025"
+    },
+    {
+        university: "University of Karachi",
+        location: "Karachi",
+        branchCampuses: [
+            "Main Campus (University Road)",
+            "Affiliated Colleges across Sindh"
+        ],
+        type: "Public",
+        website: "https://www.uok.edu.pk/",
+        requirements: "Merit-based admission; Entry tests for specific programs; Minimum 45-50% in Intermediate/Equivalent.",
+        fees: "Very low public-sector fee structure (~PKR 5,000-15,000 per semester for most programs).",
+        famousDepartments: [
+            "Arts & Humanities",
+            "Sciences (Physics, Chemistry, Mathematics)",
+            "Business Administration",
+            "Law",
+            "Pharmacy",
+            "Engineering",
+            "Computer Science",
+            "Islamic Studies"
+        ],
+        image: "/images/karachi_uni.jpg",
+        country: "Pakistan",
+        program: "General & Professional (Arts, Sciences, Business, Law)",
+        deadline: "Varies by program (typically July-August 2025)"
+    },
+    {
+        university: "SZABIST (Shaheed Zulfikar Ali Bhutto Institute of Science & Technology)",
+        location: "Islamabad",
+        branchCampuses: [
+            "Islamabad (Main)",
+            "Karachi",
+            "Dubai",
+            "Larkana",
+            "Hyderabad",
+            "Gharo"
+        ],
+        type: "Private",
+        website: "https://szabist-isb.edu.pk/",
+        requirements: "Minimum 50% in Intermediate/A-Levels + SZABIST Entry Test + Interview for selected programs.",
+        fees: "~PKR 120,000-180,000 per semester (varies by program and campus).",
+        famousDepartments: [
+            "Management Sciences (MBA, BBA)",
+            "Computer Sciences (CS, SE, AI)",
+            "Social Sciences (Psychology, IR)",
+            "Media Sciences (Mass Communication)",
+            "Executive Programs"
+        ],
+        image: "/images/szabist.jpg",
+        country: "Pakistan",
+        program: "Business, IT, Social Sciences & Media",
+        deadline: "Spring 2026 (Check admission portal)"
     }
 
 ];
