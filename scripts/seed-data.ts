@@ -527,7 +527,7 @@ const scholarships = [
     },
     {
         name: "Aga Khan Foundation International Scholarship",
-        category: "Master's Degree",
+        category: "Graduate Program",
         amount: "50% Grant + 50% Loan (interest-free for study period)",
         eligibility: "Pakistani students with Bachelor's degree, excellent academic record, admission to reputable university, financial need, commitment to development.",
         description: "The Aga Khan Foundation provides scholarships for postgraduate studies to outstanding students from developing countries who have no other means of financing their education. Priority is given to students pursuing Master's degrees.",
@@ -536,7 +536,7 @@ const scholarships = [
     },
     {
         name: "Erasmus Mundus Joint Masters",
-        category: "Master's Degree",
+        category: "Graduate Program",
         amount: "Full Tuition + Monthly Stipend (€1,400) + Travel Costs",
         eligibility: "Pakistani students with Bachelor's degree, strong academic record, English proficiency (IELTS/TOEFL), admission to Erasmus Mundus program.",
         description: "Erasmus Mundus offers fully-funded scholarships for international students to pursue joint Master's degrees across multiple European universities. Students study in at least two different EU countries.",
@@ -545,7 +545,7 @@ const scholarships = [
     },
     {
         name: "Korean Government Scholarship (GKS) - Graduate",
-        category: "Master's Degree",
+        category: "Graduate Program",
         amount: "Full Tuition + Monthly Stipend (₩1,000,000) + Airfare + Korean Language Training",
         eligibility: "Pakistani citizens under 40 years, Bachelor's degree with GPA 2.64+/4.0, good health, no previous Korean government scholarship.",
         description: "The Korean Government Scholarship Program (GKS) offers fully-funded opportunities for international students to pursue Master's and PhD degrees at Korean universities. Includes 1-year Korean language training.",
@@ -554,7 +554,7 @@ const scholarships = [
     },
     {
         name: "Chinese Government Scholarship - Master's Program",
-        category: "Master's Degree",
+        category: "Graduate Program",
         amount: "Full Tuition + Monthly Stipend (¥3,000) + Accommodation + Medical Insurance",
         eligibility: "Pakistani citizens with Bachelor's degree, under 35 years, good academic record, good health, HSK certification (for Chinese-taught programs).",
         description: "The Chinese Government offers full scholarships for international students pursuing Master's degrees at Chinese universities. Programs available in English and Chinese across various disciplines.",
@@ -563,7 +563,7 @@ const scholarships = [
     },
     {
         name: "HEC International Scholarships for Master's",
-        category: "Master's Degree",
+        category: "Graduate Program",
         amount: "Full Tuition + Monthly Stipend + Travel Allowance",
         eligibility: "Pakistani citizens with 16 years education (Bachelor's), minimum 60% marks, admission to foreign university, age under 35, no previous foreign scholarship.",
         description: "Higher Education Commission (HEC) of Pakistan offers scholarships for Pakistani students to pursue Master's and PhD degrees at top universities worldwide. Covers various countries including USA, UK, China, Turkey, and more.",
