@@ -12,8 +12,9 @@
 }
 
 :root {
-  --background: #F9FAFB;
-  /* Very Light Gray */
+  /* CHANGE THIS VALUE TO UPDATE BACKGROUND COLOR */
+  --background: #F1F5F9;
+  /* Light Slate/Gray */
   --foreground: #0f172a;
 
   /* Deep Royal Blue Theme */
