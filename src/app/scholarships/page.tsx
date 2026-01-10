@@ -48,7 +48,7 @@ export default function ScholarshipsPage() {
     );
 
     return (
-        <main className="min-h-[calc(100vh-64px)] w-full py-12 bg-[#f0f9ff]">
+        <main className="min-h-[calc(100vh-64px)] w-full py-12">
             <div className="container relative z-10 mx-auto">
                 <div className="mb-12 space-y-4 text-center">
                     <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-primary">
