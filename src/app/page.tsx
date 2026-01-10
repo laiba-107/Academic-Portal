@@ -3,16 +3,17 @@ import { GraduationCap, Award, MessageSquare, Users, CheckCircle2, ArrowRight } 
 
 export default function Home() {
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen"
+      style={{
+        backgroundImage: `linear-gradient(to bottom, rgba(30, 58, 138, 0.7), rgba(15, 23, 42, 0.9)), url('/background.png')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed'
+      }}
+    >
       {/* Hero Section */}
       <section
         className="relative h-[85vh] flex items-center justify-center text-center px-4 overflow-hidden"
-        style={{
-          backgroundImage: `linear-gradient(to bottom, rgba(30, 58, 138, 0.7), rgba(15, 23, 42, 0.9)), url('/background.png')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundAttachment: 'fixed'
-        }}
       >
         <div className="container relative z-10 space-y-8">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-sm font-bold mb-4 animate-bounce">
@@ -48,11 +49,11 @@ export default function Home() {
       </section>
 
       {/* Features Grid */}
-      <section className="py-24 bg-slate-50">
+      <section className="py-24">
         <div className="container px-4 md:px-6">
           <div className="text-center mb-16 space-y-4">
-            <h2 className="text-3xl md:text-5xl font-black text-primary">Everything You Need to Excel</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-medium">
+            <h2 className="text-3xl md:text-5xl font-black text-white">Everything You Need to Excel</h2>
+            <p className="text-lg text-slate-200 max-w-2xl mx-auto font-medium">
               We provide the tools and guidance to navigate your academic journey with confidence.
             </p>
           </div>
@@ -63,24 +64,28 @@ export default function Home() {
                 icon: <GraduationCap className="h-8 w-8" />,
                 title: "University Database",
                 desc: "Explore detailed requirements and fee structures for top-tier universities locally and globally.",
-                color: "bg-blue-500"
+                color: "bg-blue-500",
+                href: "/admissions"
               },
               {
                 icon: <Award className="h-8 w-8" />,
                 title: "Scholarship Portal",
                 desc: "Access exclusive undergraduate and graduate funding opportunities to fuel your education.",
-                color: "bg-purple-500"
+                color: "bg-purple-500",
+                href: "/scholarships"
               },
               {
                 icon: <MessageSquare className="h-8 w-8" />,
                 title: "Community Forum",
                 desc: "Connect with peers, ask questions, and share insights in our moderated student community.",
-                color: "bg-emerald-500"
+                color: "bg-emerald-500",
+                href: "/forum"
               }
             ].map((feature, i) => (
-              <div
+              <Link
                 key={i}
-                className="group p-8 bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300"
+                href={feature.href}
+                className="group p-8 bg-white/95 backdrop-blur-sm rounded-3xl border border-white/20 shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 block"
               >
                 <div className={`h-14 w-14 rounded-2xl ${feature.color} text-white flex items-center justify-center mb-6 shadow-lg shadow-black/10`}>
                   {feature.icon}
@@ -89,7 +94,7 @@ export default function Home() {
                 <p className="text-slate-600 leading-relaxed font-medium">
                   {feature.desc}
                 </p>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
